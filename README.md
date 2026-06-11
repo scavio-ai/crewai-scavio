@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration). Provides 20 search tools across Google, Amazon, Walmart, YouTube, Reddit, and TikTok for use with CrewAI agents.
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration). Provides 32 search tools across Google, Amazon, Walmart, YouTube, Reddit, TikTok, and Instagram for use with CrewAI agents.
 
 ## Installation
 
@@ -72,6 +72,18 @@ print(result)
 | TikTok | `ScavioTikTokHashtagVideosTool` | Videos by hashtag |
 | TikTok | `ScavioTikTokUserFollowersTool` | User's followers |
 | TikTok | `ScavioTikTokUserFollowingsTool` | User's followings |
+| Instagram | `ScavioInstagramProfileTool` | User profile lookup |
+| Instagram | `ScavioInstagramUserPostsTool` | User's posts |
+| Instagram | `ScavioInstagramUserReelsTool` | User's reels |
+| Instagram | `ScavioInstagramTaggedPostsTool` | Posts user is tagged in |
+| Instagram | `ScavioInstagramStoriesTool` | User's active stories |
+| Instagram | `ScavioInstagramPostTool` | Post details |
+| Instagram | `ScavioInstagramPostCommentsTool` | Post comments |
+| Instagram | `ScavioInstagramCommentRepliesTool` | Comment replies |
+| Instagram | `ScavioInstagramSearchUsersTool` | User search by keyword |
+| Instagram | `ScavioInstagramSearchHashtagsTool` | Hashtag search by keyword |
+| Instagram | `ScavioInstagramUserFollowersTool` | User's followers |
+| Instagram | `ScavioInstagramUserFollowingsTool` | User's followings |
 
 ## Usage Examples
 
