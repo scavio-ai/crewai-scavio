@@ -6,14 +6,13 @@ from __future__ import annotations
 def mock_search_response(num_results: int = 10) -> dict:
     return {
         "query": "test query",
-        "page": 1,
         "credits_used": 1,
         "credits_remaining": 999,
-        "results": [
+        "organic_results": [
             {
                 "title": f"Result {i}",
-                "url": f"https://example.com/{i}",
-                "description": f"Description {i}",
+                "link": f"https://example.com/{i}",
+                "snippet": f"Snippet {i}",
                 "position": i,
             }
             for i in range(1, num_results + 1)
