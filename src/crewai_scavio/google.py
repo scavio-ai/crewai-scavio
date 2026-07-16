@@ -32,7 +32,7 @@ _INCLUDE_FIELD_TO_KEY: dict[str, str] = {
 
 # Response keys that contain truncatable lists.
 _LIST_KEYS: list[str] = [
-    "results",
+    "organic_results",
     "maps_results",
     "local_results",
     "news_results",
@@ -40,12 +40,12 @@ _LIST_KEYS: list[str] = [
 
 
 class ScavioSearchTool(ScavioBaseTool):
-    """Web search tool powered by the Scavio Google Search API.
+    """Web search tool powered by the Scavio Google Search API (v2).
 
     Attributes:
-        search_type: Type of search to perform.
-        country_code: Two-letter country code for localised results.
-        language: Language code for result language preference.
+        country_code: Two-letter country code for localised results (maps to gl).
+        language: Language code for result language preference (maps to hl).
+        page: 1-based result page; page 2+ maps to a result offset (start).
         device: Device type to emulate.
         include_knowledge_graph: Include knowledge-graph panel in response.
         include_questions: Include "People also ask" questions.
@@ -60,20 +60,20 @@ class ScavioSearchTool(ScavioBaseTool):
         include_top_ads: Include top ad results.
         include_bottom_ads: Include bottom ad results.
         nfpr: Disable automatic spelling correction.
-        light_request: Use the lightweight request mode when set.
     """
 
     name: str = "Scavio Search"
     description: str = (
-        "Search the web using the Scavio Google Search API. "
-        "Returns organic results, knowledge graph, related questions, "
-        "and more depending on configuration."
+        "Search the web using the Scavio Google Search API (v2). "
+        "Returns organic results (title, link, snippet), knowledge graph, "
+        "related questions, and more depending on configuration. "
+        "Costs 1 credit per search."
     )
     args_schema: Type[BaseModel] = ScavioSearchInput
 
-    search_type: Literal["classic", "news", "maps", "images"] = "classic"
     country_code: str | None = None
     language: str | None = None
+    page: int | None = None
     device: Literal["desktop", "mobile"] = "desktop"
     include_knowledge_graph: bool = True
     include_questions: bool = True
@@ -88,7 +88,24 @@ class ScavioSearchTool(ScavioBaseTool):
     include_top_ads: bool = False
     include_bottom_ads: bool = False
     nfpr: bool = False
-    light_request: bool | None = None
+
+    def _build_params(self) -> dict[str, Any]:
+        """Map public tool attributes to v2 Google Search wire params.
+
+        Returns:
+            Keyword arguments for ``client.google.search``.
+        """
+        params: dict[str, Any] = {
+            "device": self.device,
+            "nfpr": self.nfpr,
+        }
+        if self.country_code:
+            params["gl"] = self.country_code
+        if self.language:
+            params["hl"] = self.language
+        if self.page and self.page > 1:
+            params["start"] = (self.page - 1) * 10
+        return params
 
     def _run(self, query: str, **kwargs: Any) -> str:
         """Execute a synchronous Google search.
@@ -99,15 +116,7 @@ class ScavioSearchTool(ScavioBaseTool):
         Returns:
             JSON-serialised search results.
         """
-        raw = self.client.google.search(
-            query=query,
-            search_type=self.search_type,
-            country_code=self.country_code,
-            language=self.language,
-            device=self.device,
-            nfpr=self.nfpr,
-            light_request=self.light_request,
-        )
+        raw = self.client.google.search(query=query, **self._build_params())
         return self._format_response(self._post_process(raw))
 
     async def _arun(self, query: str, **kwargs: Any) -> str:
@@ -120,13 +129,7 @@ class ScavioSearchTool(ScavioBaseTool):
             JSON-serialised search results.
         """
         raw = await self.async_client.google.search(
-            query=query,
-            search_type=self.search_type,
-            country_code=self.country_code,
-            language=self.language,
-            device=self.device,
-            nfpr=self.nfpr,
-            light_request=self.light_request,
+            query=query, **self._build_params()
         )
         return self._format_response(self._post_process(raw))
 

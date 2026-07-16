@@ -24,7 +24,7 @@ class TestScavioSearchTool:
         tool = ScavioSearchTool(api_key=MOCK_API_KEY)
         assert tool.name == "Scavio Search"
         assert tool.max_results == 5
-        assert tool.search_type == "classic"
+        assert tool.device == "desktop"
 
     @patch("crewai_scavio._base.ScavioClient")
     @patch("crewai_scavio._base.AsyncScavioClient")
@@ -38,7 +38,55 @@ class TestScavioSearchTool:
         tool = ScavioSearchTool(api_key=MOCK_API_KEY, max_results=3)
         result = tool._run(query="test query")
         parsed = json.loads(result)
-        assert len(parsed["results"]) == 3
+        assert len(parsed["organic_results"]) == 3
+        assert parsed["organic_results"][0]["link"].startswith("https://")
+        assert "snippet" in parsed["organic_results"][0]
+
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    def test_maps_v2_params(self, mock_async, mock_client_cls):
+        """Test that country_code/language/page map to gl/hl/start."""
+        mock_client = MagicMock()
+        mock_client.google.search.return_value = mock_search_response()
+        mock_client_cls.return_value = mock_client
+
+        tool = ScavioSearchTool(
+            api_key=MOCK_API_KEY,
+            country_code="fr",
+            language="de",
+            page=3,
+        )
+        tool._run(query="test query")
+
+        _, kwargs = mock_client.google.search.call_args
+        assert kwargs["gl"] == "fr"
+        assert kwargs["hl"] == "de"
+        assert kwargs["start"] == 20
+        # v1-only params must never reach the SDK.
+        assert "country_code" not in kwargs
+        assert "language" not in kwargs
+        assert "page" not in kwargs
+        assert "search_type" not in kwargs
+        assert "light_request" not in kwargs
+
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    def test_page_one_omits_start(self, mock_async, mock_client_cls):
+        """Test that page 1 (or unset) does not send a start offset."""
+        mock_client = MagicMock()
+        mock_client.google.search.return_value = mock_search_response()
+        mock_client_cls.return_value = mock_client
+
+        tool = ScavioSearchTool(api_key=MOCK_API_KEY)
+        tool._run(query="test query")
+
+        _, kwargs = mock_client.google.search.call_args
+        assert "start" not in kwargs
+        assert "gl" not in kwargs
+        assert "hl" not in kwargs
+        assert kwargs["device"] == "desktop"
 
     @patch("crewai_scavio._base.ScavioClient")
     @patch("crewai_scavio._base.AsyncScavioClient")
@@ -74,7 +122,7 @@ class TestScavioSearchTool:
         tool = ScavioSearchTool(api_key=MOCK_API_KEY, max_results=2)
         result = await tool._arun(query="test")
         parsed = json.loads(result)
-        assert len(parsed["results"]) == 2
+        assert len(parsed["organic_results"]) == 2
 
     @patch("crewai_scavio._base.SCAVIO_AVAILABLE", False)
     def test_raises_import_error(self):
