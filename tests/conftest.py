@@ -79,6 +79,85 @@ def mock_youtube_metadata_response() -> dict:
     }
 
 
+def mock_youtube_comments_response(num_comments: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "comments": [
+                {
+                    "comment_id": f"c_{i}",
+                    "text": f"Comment {i}",
+                    "like_count": 10 * i,
+                    "reply_count": i,
+                }
+                for i in range(1, num_comments + 1)
+            ],
+            "has_more": True,
+        },
+    }
+
+
+def mock_youtube_transcript_response() -> dict:
+    return {
+        "credits_used": 8,
+        "data": {
+            "video_id": "vid_1",
+            "language_code": "en",
+            "language_name": "English",
+            "format": "text",
+            "content": "hello and welcome to this video",
+        },
+    }
+
+
+def mock_youtube_channel_response() -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "channel_id": "chan_1",
+            "title": "Test Channel",
+            "subscriber_count": 509000000,
+            "video_count": 993,
+            "view_count": 134561410625,
+        },
+    }
+
+
+def mock_youtube_channel_videos_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "channel_id": "chan_1",
+            "results": [
+                {
+                    "video_id": f"vid_{i}",
+                    "title": f"Video {i}",
+                    "view_count": 1000 * i,
+                }
+                for i in range(1, num_results + 1)
+            ],
+            "has_more": True,
+        },
+    }
+
+
+def mock_youtube_streams_response() -> dict:
+    return {
+        "credits_used": 3,
+        "data": {
+            "video_id": "vid_1",
+            "title": "Test Video",
+            "length_seconds": 212,
+            "view_count": 10000,
+            "is_live": False,
+            "formats": [
+                {"itag": 22, "url": "https://example.com/v", "quality_label": "720p"},
+            ],
+            "available_qualities": ["720p", "360p"],
+        },
+    }
+
+
 def mock_walmart_search_response(num_products: int = 10) -> dict:
     return {
         "credits_used": 1,
