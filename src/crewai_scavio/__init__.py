@@ -33,7 +33,15 @@ from crewai_scavio.tiktok import (
     ScavioTikTokVideoTool,
 )
 from crewai_scavio.walmart import ScavioWalmartProductTool, ScavioWalmartSearchTool
-from crewai_scavio.youtube import ScavioYouTubeMetadataTool, ScavioYouTubeSearchTool
+from crewai_scavio.youtube import (
+    ScavioYouTubeChannelTool,
+    ScavioYouTubeChannelVideosTool,
+    ScavioYouTubeCommentsTool,
+    ScavioYouTubeMetadataTool,
+    ScavioYouTubeSearchTool,
+    ScavioYouTubeStreamsTool,
+    ScavioYouTubeTranscriptTool,
+)
 
 __version__ = "0.2.0"
 
@@ -43,6 +51,11 @@ __all__ = [
     "ScavioAmazonProductTool",
     "ScavioYouTubeSearchTool",
     "ScavioYouTubeMetadataTool",
+    "ScavioYouTubeCommentsTool",
+    "ScavioYouTubeTranscriptTool",
+    "ScavioYouTubeChannelTool",
+    "ScavioYouTubeChannelVideosTool",
+    "ScavioYouTubeStreamsTool",
     "ScavioWalmartSearchTool",
     "ScavioWalmartProductTool",
     "ScavioRedditSearchTool",

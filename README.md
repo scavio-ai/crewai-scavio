@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 32 search tools across Google, Amazon, Walmart, YouTube, Reddit, TikTok, and Instagram for use with CrewAI agents.
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 37 search tools across Google, Amazon, Walmart, YouTube, Reddit, TikTok, and Instagram for use with CrewAI agents.
 
 ## Installation
 
@@ -56,7 +56,12 @@ print(result)
 | Amazon | `ScavioAmazonSearchTool` | Product search across 20+ marketplaces |
 | Amazon | `ScavioAmazonProductTool` | Product details by ASIN |
 | YouTube | `ScavioYouTubeSearchTool` | Video search with filters |
-| YouTube | `ScavioYouTubeMetadataTool` | Video metadata by ID |
+| YouTube | `ScavioYouTubeMetadataTool` | Video metadata by ID or watch URL |
+| YouTube | `ScavioYouTubeCommentsTool` | Video comments by ID |
+| YouTube | `ScavioYouTubeTranscriptTool` | Video transcript / captions by ID |
+| YouTube | `ScavioYouTubeChannelTool` | Channel details by ID, @handle, or URL |
+| YouTube | `ScavioYouTubeChannelVideosTool` | Videos uploaded by a channel |
+| YouTube | `ScavioYouTubeStreamsTool` | Playable / downloadable stream formats |
 | Walmart | `ScavioWalmartSearchTool` | Product search with price/fulfillment filters |
 | Walmart | `ScavioWalmartProductTool` | Product details by ID |
 | Reddit | `ScavioRedditSearchTool` | Post and comment search |
