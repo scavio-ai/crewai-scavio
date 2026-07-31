@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
-from crewai_scavio.amazon import ScavioAmazonProductTool, ScavioAmazonSearchTool
+from crewai_scavio.amazon import (
+    ScavioAmazonOffersTool,
+    ScavioAmazonProductTool,
+    ScavioAmazonSearchTool,
+)
 from crewai_scavio.google import ScavioSearchTool
 from crewai_scavio.instagram import (
     ScavioInstagramCommentRepliesTool,
@@ -32,6 +36,16 @@ from crewai_scavio.tiktok import (
     ScavioTikTokVideoCommentsTool,
     ScavioTikTokVideoTool,
 )
+from crewai_scavio.tiktok_shop import (
+    ScavioTikTokShopCategoriesTool,
+    ScavioTikTokShopCategoryProductsTool,
+    ScavioTikTokShopProductReviewsTool,
+    ScavioTikTokShopProductTool,
+    ScavioTikTokShopResolveTool,
+    ScavioTikTokShopSearchSuggestionsTool,
+    ScavioTikTokShopSearchTool,
+    ScavioTikTokShopShopProductsTool,
+)
 from crewai_scavio.walmart import ScavioWalmartProductTool, ScavioWalmartSearchTool
 from crewai_scavio.youtube import (
     ScavioYouTubeChannelTool,
@@ -43,12 +57,13 @@ from crewai_scavio.youtube import (
     ScavioYouTubeTranscriptTool,
 )
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 
 __all__ = [
     "ScavioSearchTool",
     "ScavioAmazonSearchTool",
     "ScavioAmazonProductTool",
+    "ScavioAmazonOffersTool",
     "ScavioYouTubeSearchTool",
     "ScavioYouTubeMetadataTool",
     "ScavioYouTubeCommentsTool",
@@ -71,6 +86,14 @@ __all__ = [
     "ScavioTikTokHashtagVideosTool",
     "ScavioTikTokUserFollowersTool",
     "ScavioTikTokUserFollowingsTool",
+    "ScavioTikTokShopSearchTool",
+    "ScavioTikTokShopSearchSuggestionsTool",
+    "ScavioTikTokShopProductTool",
+    "ScavioTikTokShopProductReviewsTool",
+    "ScavioTikTokShopCategoriesTool",
+    "ScavioTikTokShopCategoryProductsTool",
+    "ScavioTikTokShopShopProductsTool",
+    "ScavioTikTokShopResolveTool",
     "ScavioInstagramProfileTool",
     "ScavioInstagramUserPostsTool",
     "ScavioInstagramUserReelsTool",
