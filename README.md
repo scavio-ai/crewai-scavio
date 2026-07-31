@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 37 search tools across Google, Amazon, Walmart, YouTube, Reddit, TikTok, and Instagram for use with CrewAI agents.
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 46 search tools across Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, and Instagram for use with CrewAI agents.
 
 ## Installation
 
@@ -53,8 +53,9 @@ print(result)
 | Provider | Tool Class | Description |
 |----------|-----------|-------------|
 | Google | `ScavioSearchTool` | Web search with knowledge graphs and related questions |
-| Amazon | `ScavioAmazonSearchTool` | Product search across 20+ marketplaces |
+| Amazon | `ScavioAmazonSearchTool` | Product search across 22 marketplaces |
 | Amazon | `ScavioAmazonProductTool` | Product details by ASIN |
+| Amazon | `ScavioAmazonOffersTool` | Every seller offer for an ASIN, including the buy-box winner |
 | YouTube | `ScavioYouTubeSearchTool` | Video search with filters |
 | YouTube | `ScavioYouTubeMetadataTool` | Video metadata by ID or watch URL |
 | YouTube | `ScavioYouTubeCommentsTool` | Video comments by ID |
@@ -77,6 +78,14 @@ print(result)
 | TikTok | `ScavioTikTokHashtagVideosTool` | Videos by hashtag |
 | TikTok | `ScavioTikTokUserFollowersTool` | User's followers |
 | TikTok | `ScavioTikTokUserFollowingsTool` | User's followings |
+| TikTok Shop | `ScavioTikTokShopSearchTool` | Product search by keyword (US), with exact prices |
+| TikTok Shop | `ScavioTikTokShopSearchSuggestionsTool` | Keyword autocomplete across 8 regions |
+| TikTok Shop | `ScavioTikTokShopProductTool` | Full product detail (no price -- upstream masks it) |
+| TikTok Shop | `ScavioTikTokShopProductReviewsTool` | Paginated reviews, up to 200 per call |
+| TikTok Shop | `ScavioTikTokShopCategoriesTool` | Global category tree (240 nodes, 2 levels) |
+| TikTok Shop | `ScavioTikTokShopCategoryProductsTool` | Products under a category, with exact prices |
+| TikTok Shop | `ScavioTikTokShopShopProductsTool` | A seller's catalog, with exact prices |
+| TikTok Shop | `ScavioTikTokShopResolveTool` | Resolve a Shop URL or share link to an id |
 | Instagram | `ScavioInstagramProfileTool` | User profile lookup |
 | Instagram | `ScavioInstagramUserPostsTool` | User's posts |
 | Instagram | `ScavioInstagramUserReelsTool` | User's reels |
@@ -95,11 +104,24 @@ print(result)
 ### Amazon Product Search
 
 ```python
-from crewai_scavio import ScavioAmazonSearchTool
+from crewai_scavio import ScavioAmazonSearchTool, ScavioAmazonOffersTool
 
-amazon_tool = ScavioAmazonSearchTool(domain="com", max_results=5)
+amazon_tool = ScavioAmazonSearchTool(country="us", max_results=5)
 result = amazon_tool.run("wireless noise cancelling headphones")
+
+offers_tool = ScavioAmazonOffersTool()
+offers = offers_tool.run(asin="B08N5WRWNW")
 ```
+
+> **Amazon changed in 0.4.0 (breaking).** The upstream provider moved. `domain`
+> is replaced by `country`, a two-letter marketplace code (`us`, `gb` -- the UK
+> is `gb`, not `uk` -- `de`, `jp`, ...). `sort_by`, `pages`, `category_id`,
+> `merchant_id`, `language`, `currency`, `device`, `zip_code` and
+> `autoselect_variant` are gone: the marketplace ignores all of them, and
+> `sort_by` was verified to return the identical unordered set for every value,
+> so they are removed rather than kept as silent no-ops. Product responses are
+> normalized now -- `price` is a number with a sibling `currency`, not an
+> object, and `buybox` is gone (use `ScavioAmazonOffersTool`).
 
 ### YouTube Video Search
 
@@ -117,6 +139,48 @@ from crewai_scavio import ScavioRedditSearchTool
 
 reddit_tool = ScavioRedditSearchTool(max_results=10, sort="hot")
 result = reddit_tool.run("AI agents")
+```
+
+### TikTok Shop
+
+Two things to know before wiring these together:
+
+1. **`ScavioTikTokShopProductTool` resolves only about 44% of the product ids
+   that `ScavioTikTokShopSearchTool` returns.** Upstream has no detail data for
+   the rest, so a not-found result is a normal outcome rather than an error --
+   skip the product instead of retrying. Search is a listing source, not the
+   first leg of a reliable search-then-detail pipeline.
+2. **`ScavioTikTokShopProductTool` does not return a price.** Upstream masks the
+   digits on the product page, so `price.current` and `price.original` come back
+   null. Exact prices are on `ScavioTikTokShopSearchTool`,
+   `ScavioTikTokShopShopProductsTool` and `ScavioTikTokShopCategoryProductsTool`.
+
+```python
+import json
+
+from crewai_scavio import (
+    ScavioTikTokShopSearchTool,
+    ScavioTikTokShopProductTool,
+    ScavioTikTokShopProductReviewsTool,
+)
+
+# Listing data, including the exact price
+search_tool = ScavioTikTokShopSearchTool(max_results=10)
+page = json.loads(search_tool.run(search="phone case"))
+for product in page["data"]["products"]:
+    print(product["title"], product["price"]["current"])
+
+# Detail: rich, but priceless and only ~44% resolvable
+detail_tool = ScavioTikTokShopProductTool()
+detail = json.loads(detail_tool.run(product_id="1732293553906094315"))
+if detail.get("not_found"):
+    pass                                  # normal outcome: skip, do not retry
+
+# Reviews: page with has_more, never with total_reviews (it drifts)
+reviews_tool = ScavioTikTokShopProductReviewsTool(max_results=20)
+reviews = json.loads(
+    reviews_tool.run(product_id="1732293553906094315", page_size=100)
+)
 ```
 
 ## Configuration
