@@ -1,4 +1,4 @@
-"""Shared fixtures and mock response builders for Scavio AutoGen tests."""
+"""Shared fixtures and mock response builders for Scavio CrewAI tests."""
 
 from __future__ import annotations
 
@@ -607,3 +607,470 @@ class MockNotFoundError(Exception):
     """Stands in for the SDK's NotFoundError, which carries status_code 404."""
 
     status_code = 404
+
+
+# -- Reddit (the ten endpoints beyond search / post) ------------------------
+#
+# Reddit envelopes are {data, response_time, credits_used, credits_remaining}.
+# The list key differs per endpoint: search -> results, the subreddit / user /
+# popular feeds -> posts, comments -> comments, replies -> replies.
+
+
+def mock_reddit_suggestions_response(num_suggestions: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "suggestions": [f"python {i}" for i in range(1, num_suggestions + 1)],
+            "total_count": num_suggestions,
+        },
+    }
+
+
+def mock_reddit_comments_response(num_comments: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "comments": [
+                {
+                    "comment_id": f"t1_c_{i}",
+                    "text": f"Comment {i}",
+                    "author": f"user_{i}",
+                    "score": i * 3,
+                    "depth": 0,
+                    "reply_cursor": f"reply_cursor_{i}",
+                }
+                for i in range(1, num_comments + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_reddit_replies_response(num_replies: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "replies": [
+                {
+                    "comment_id": f"t1_r_{i}",
+                    "text": f"Reply {i}",
+                    "author": f"user_{i}",
+                    "score": i,
+                    "depth": 1,
+                    "reply_cursor": None,
+                }
+                for i in range(1, num_replies + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_reddit_subreddit_response() -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "id": "t5_2qh1i",
+            "name": "AskReddit",
+            "prefixed_name": "r/AskReddit",
+            "title": "Ask Reddit",
+            "public_description": "Ask away.",
+            "subscribers": 45000000,
+            "active_count": 12000,
+            "is_nsfw": False,
+        },
+    }
+
+
+def mock_reddit_posts_feed_response(num_posts: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "posts": [
+                {
+                    "post_id": f"t3_post_{i}",
+                    "title": f"Post {i}",
+                    "subreddit": "test",
+                    "author": f"user_{i}",
+                    "score": 10 * i,
+                    "num_comments": i,
+                }
+                for i in range(1, num_posts + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_reddit_user_response() -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "id": "t2_1w72",
+            "name": "spez",
+            "is_employee": True,
+            "is_verified": True,
+            "karma": 900000,
+            "post_karma": 200000,
+            "comment_karma": 700000,
+        },
+    }
+
+
+def mock_reddit_user_comments_response(num_comments: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "comments": [
+                {
+                    "comment_id": f"t1_uc_{i}",
+                    "text": f"User comment {i}",
+                    "author": "spez",
+                    "post": {"id": f"t3_post_{i}", "title": f"Post {i}"},
+                    "score": i * 2,
+                }
+                for i in range(1, num_comments + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_reddit_trending_response(num_trends: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "trending": [
+                {"query": f"trend {i}", "raw_query": f"trend+{i}"}
+                for i in range(1, num_trends + 1)
+            ],
+            "total_count": num_trends,
+        },
+    }
+
+
+# -- YouTube (the eight endpoints beyond the original seven) ----------------
+
+
+def mock_youtube_shorts_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 2,
+        "data": {
+            "results": [
+                {
+                    "video_id": f"short_{i}",
+                    "title": f"Short {i}",
+                    "url": f"https://www.youtube.com/shorts/short_{i}",
+                }
+                for i in range(1, num_results + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_youtube_suggestions_response(num_suggestions: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "suggestions": [
+                f"python tutorial {i}" for i in range(1, num_suggestions + 1)
+            ],
+            "total_count": num_suggestions,
+        },
+    }
+
+
+def mock_youtube_comment_replies_response(num_replies: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "replies": [
+                {
+                    "comment_id": f"r_{i}",
+                    "text": f"Reply {i}",
+                    "like_count": i,
+                }
+                for i in range(1, num_replies + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_youtube_related_response(num_results: int = 10) -> dict:
+    # No next_cursor / has_more here -- /related returns total_count only.
+    return {
+        "credits_used": 1,
+        "data": {
+            "results": [
+                {"video_id": f"rel_{i}", "title": f"Related {i}"}
+                for i in range(1, num_results + 1)
+            ],
+            "total_count": num_results,
+        },
+    }
+
+
+def mock_youtube_channel_search_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "results": [
+                {
+                    "channel_id": f"chan_{i}",
+                    "name": f"Channel {i}",
+                    "handle": f"@channel{i}",
+                    "subscriber_count": 1000 * i,
+                    "verified": True,
+                }
+                for i in range(1, num_results + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+            "total_count": num_results,
+        },
+    }
+
+
+def mock_youtube_channel_shorts_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "channel_id": "chan_1",
+            "results": [
+                {
+                    "video_id": f"short_{i}",
+                    "title": f"Short {i}",
+                    "url": f"https://www.youtube.com/shorts/short_{i}",
+                    "thumbnail": "https://example.com/t.jpg",
+                }
+                for i in range(1, num_results + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+            "total_count": num_results,
+        },
+    }
+
+
+def mock_youtube_channel_community_response(num_posts: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "channel_id": "chan_1",
+            "posts": [
+                {
+                    "post_id": f"cp_{i}",
+                    "text": f"Community post {i}",
+                    "vote_count": 10 * i,
+                    "comment_count": i,
+                }
+                for i in range(1, num_posts + 1)
+            ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
+        },
+    }
+
+
+def mock_youtube_channel_resolve_response() -> dict:
+    return {
+        "credits_used": 1,
+        "data": {
+            "channel_id": "UCX6OQ3DkcsbYNE6H8uQQuVA",
+            "channel_url": "https://www.youtube.com/@MrBeast",
+        },
+    }
+
+
+# -- Google v2 --------------------------------------------------------------
+#
+# Every Google response is FLAT: the payload sits at the top level next to
+# response_time / credits_used / credits_remaining / cached. There is no
+# `data` wrapper anywhere in this family.
+
+
+def mock_google_ai_mode_response(num_references: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "text_blocks": [{"type": "paragraph", "snippet": "An answer."}],
+        "references": [
+            {"title": f"Reference {i}", "link": f"https://example.com/{i}"}
+            for i in range(1, num_references + 1)
+        ],
+    }
+
+
+def mock_google_maps_search_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "local_results": [
+            {
+                "position": i,
+                "title": f"Business {i}",
+                "place_id": f"ChIJ_{i}",
+                "data_id": f"0x89c2596{i}:0xe230af1b18e542a7",
+                "rating": 4.5,
+            }
+            for i in range(1, num_results + 1)
+        ],
+    }
+
+
+def mock_google_maps_place_response() -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "place_results": {
+            "title": "Business 1",
+            "place_id": "ChIJ_1",
+            "rating": 4.5,
+            "reviews": 1200,
+        },
+    }
+
+
+def mock_google_maps_reviews_response(num_reviews: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "place_info": {"title": "Business 1"},
+        "reviews": [
+            {"user": f"Reviewer {i}", "rating": 5, "snippet": f"Review {i}"}
+            for i in range(1, num_reviews + 1)
+        ],
+        "pagination": {"next_page_token": "token_2"},
+    }
+
+
+def mock_google_shopping_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "shopping_results": [
+            {
+                "position": i,
+                "title": f"Product {i}",
+                "price": f"${i}.99",
+                "catalog_id": f"catalog_{i}",
+            }
+            for i in range(1, num_results + 1)
+        ],
+    }
+
+
+def mock_google_shopping_product_response() -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "product_results": {
+            "title": "Product 1",
+            "stores": [
+                {"name": "Store 1", "total_price": "$19.99"},
+            ],
+        },
+    }
+
+
+def mock_google_shopping_stores_response() -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "product_results": {
+            "stores": [
+                {"name": f"Store {i}", "total_price": f"${i}.99"}
+                for i in range(1, 4)
+            ],
+        },
+    }
+
+
+def mock_google_flights_response(num_flights: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "best_flights": [
+            {"price": 200 + i, "total_duration": 300 + i}
+            for i in range(1, num_flights + 1)
+        ],
+        "other_flights": [
+            {"price": 400 + i, "total_duration": 500 + i}
+            for i in range(1, num_flights + 1)
+        ],
+    }
+
+
+def mock_google_hotels_response(num_properties: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "properties": [
+            {
+                "name": f"Hotel {i}",
+                "detail_token": f"detail_token_{i}",
+                "rate_per_night": {"lowest": f"${100 + i}"},
+            }
+            for i in range(1, num_properties + 1)
+        ],
+    }
+
+
+def mock_google_hotels_detail_response() -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "property": {
+            "name": "Hotel 1",
+            "booking_sources": [{"name": "Booking.com", "rate": "$120"}],
+        },
+    }
+
+
+def mock_google_news_response(num_results: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "news_results": [
+            {
+                "position": i,
+                "title": f"Story {i}",
+                "link": f"https://news.example.com/{i}",
+                "source": {"name": f"Publisher {i}"},
+            }
+            for i in range(1, num_results + 1)
+        ],
+    }
+
+
+def mock_google_trends_response(num_regions: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "interest_over_time": {
+            "timeline_data": [{"date": "Jul 2026", "values": [{"value": "80"}]}],
+        },
+        "interest_by_region": [
+            {"location": f"Region {i}", "value": 100 - i}
+            for i in range(1, num_regions + 1)
+        ],
+    }
+
+
+def mock_google_trending_response(num_trends: int = 10) -> dict:
+    return {
+        "credits_used": 1,
+        "cached": False,
+        "trends": [
+            {"query": f"trend {i}", "search_volume": 1000 * i}
+            for i in range(1, num_trends + 1)
+        ],
+    }

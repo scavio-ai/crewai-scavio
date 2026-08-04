@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 46 search tools across Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, and Instagram for use with CrewAI agents.
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 97 search tools -- one per Scavio endpoint -- across Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, Instagram, X (Twitter), and LinkedIn for use with CrewAI agents.
 
 ## Installation
 
@@ -53,6 +53,19 @@ print(result)
 | Provider | Tool Class | Description |
 |----------|-----------|-------------|
 | Google | `ScavioSearchTool` | Web search with knowledge graphs and related questions |
+| Google | `ScavioGoogleAiModeTool` | AI Mode conversational answer with references |
+| Google | `ScavioGoogleMapsSearchTool` | Local business results (place_id + data_id per hit) |
+| Google | `ScavioGoogleMapsPlaceTool` | Place details by place_id or data_cid |
+| Google | `ScavioGoogleMapsReviewsTool` | Place reviews, up to 20 per page |
+| Google | `ScavioGoogleShoppingTool` | Shopping listings with price and shipping filters |
+| Google | `ScavioGoogleShoppingProductTool` | Shopping product detail and seller list |
+| Google | `ScavioGoogleShoppingStoresTool` | More sellers for a shopping product |
+| Google | `ScavioGoogleFlightsTool` | Flight itineraries between two airports |
+| Google | `ScavioGoogleHotelsTool` | Hotel search for a destination and date range |
+| Google | `ScavioGoogleHotelsDetailTool` | Property details and booking sources |
+| Google | `ScavioGoogleNewsTool` | News by query, topic, story, or publication |
+| Google | `ScavioGoogleTrendsTool` | Trends interest over time and by region |
+| Google | `ScavioGoogleTrendingTool` | Trending Now searches for a country |
 | Amazon | `ScavioAmazonSearchTool` | Product search across 22 marketplaces |
 | Amazon | `ScavioAmazonProductTool` | Product details by ASIN |
 | Amazon | `ScavioAmazonOffersTool` | Every seller offer for an ASIN, including the buy-box winner |
@@ -63,10 +76,28 @@ print(result)
 | YouTube | `ScavioYouTubeChannelTool` | Channel details by ID, @handle, or URL |
 | YouTube | `ScavioYouTubeChannelVideosTool` | Videos uploaded by a channel |
 | YouTube | `ScavioYouTubeStreamsTool` | Playable / downloadable stream formats |
+| YouTube | `ScavioYouTubeShortsTool` | Shorts search by keyword |
+| YouTube | `ScavioYouTubeSuggestionsTool` | Search autocomplete suggestions |
+| YouTube | `ScavioYouTubeCommentRepliesTool` | Replies to a comment, via its reply_cursor |
+| YouTube | `ScavioYouTubeRelatedTool` | Videos related to a video |
+| YouTube | `ScavioYouTubeChannelSearchTool` | Channel search by keyword |
+| YouTube | `ScavioYouTubeChannelShortsTool` | Shorts posted by a channel |
+| YouTube | `ScavioYouTubeChannelCommunityTool` | A channel's community posts |
+| YouTube | `ScavioYouTubeChannelResolveTool` | Resolve an @handle or URL to a channel ID |
 | Walmart | `ScavioWalmartSearchTool` | Product search with price/fulfillment filters |
 | Walmart | `ScavioWalmartProductTool` | Product details by ID |
 | Reddit | `ScavioRedditSearchTool` | Post search with cursor pagination |
-| Reddit | `ScavioRedditPostTool` | Post details by URL (no comments) |
+| Reddit | `ScavioRedditSearchSuggestionsTool` | Search query autocomplete |
+| Reddit | `ScavioRedditPostTool` | Post details by url or post_id (no comments) |
+| Reddit | `ScavioRedditPostCommentsTool` | Top-level comments on a post |
+| Reddit | `ScavioRedditCommentRepliesTool` | Replies to a comment, via its reply_cursor |
+| Reddit | `ScavioRedditSubredditTool` | Subreddit metadata |
+| Reddit | `ScavioRedditSubredditPostsTool` | A subreddit's post feed (accepts RISING) |
+| Reddit | `ScavioRedditUserTool` | Redditor profile and karma |
+| Reddit | `ScavioRedditUserPostsTool` | A redditor's submitted posts |
+| Reddit | `ScavioRedditUserCommentsTool` | A redditor's comments |
+| Reddit | `ScavioRedditPopularTool` | Site-wide popular feed |
+| Reddit | `ScavioRedditTrendingTool` | Trending Reddit searches |
 | TikTok | `ScavioTikTokProfileTool` | User profile lookup |
 | TikTok | `ScavioTikTokUserPostsTool` | User's posted videos |
 | TikTok | `ScavioTikTokVideoTool` | Video details |
@@ -98,6 +129,26 @@ print(result)
 | Instagram | `ScavioInstagramSearchHashtagsTool` | Hashtag search by keyword |
 | Instagram | `ScavioInstagramUserFollowersTool` | User's followers |
 | Instagram | `ScavioInstagramUserFollowingsTool` | User's followings |
+| X | `ScavioXSearchTool` | Tweet / people search (query field is `search`) |
+| X | `ScavioXTweetTool` | Tweet details by id |
+| X | `ScavioXTweetCommentsTool` | Replies to a tweet |
+| X | `ScavioXTweetRetweetersTool` | Users who retweeted a tweet |
+| X | `ScavioXUserTool` | Profile by screen name |
+| X | `ScavioXUserTweetsTool` | A user's tweets |
+| X | `ScavioXUserRepliesTool` | A user's replies |
+| X | `ScavioXUserMediaTool` | A user's media tweets |
+| X | `ScavioXUserFollowersTool` | A user's followers |
+| X | `ScavioXUserFollowingsTool` | A user's followings (response key is `following`) |
+| X | `ScavioXTrendingTool` | Trends by country name (e.g. 'UnitedStates') |
+| LinkedIn | `ScavioLinkedInPersonTool` | Person profile by username or URL |
+| LinkedIn | `ScavioLinkedInPersonAboutTool` | A person's about section |
+| LinkedIn | `ScavioLinkedInPersonPostsTool` | A person's posts, comments, or reactions |
+| LinkedIn | `ScavioLinkedInCompanyTool` | Company profile with featured employees |
+| LinkedIn | `ScavioLinkedInCompanyPostsTool` | A company's posts |
+| LinkedIn | `ScavioLinkedInSearchJobsTool` | Job search |
+| LinkedIn | `ScavioLinkedInJobTool` | Job details by id |
+| LinkedIn | `ScavioLinkedInPostTool` | Post details by id or URL |
+| LinkedIn | `ScavioLinkedInPostCommentsTool` | Post comments (paged by integer `page`) |
 
 ## Usage Examples
 
@@ -143,6 +194,42 @@ from crewai_scavio import ScavioRedditSearchTool
 
 reddit_tool = ScavioRedditSearchTool(max_results=10)
 result = reddit_tool.run("AI agents")
+```
+
+`/reddit/post` returns a flat post object with no comments. Fetch the thread in
+a second call, then drill into a comment with its `reply_cursor`:
+
+```python
+from crewai_scavio import (
+    ScavioRedditCommentRepliesTool,
+    ScavioRedditPostCommentsTool,
+)
+
+comments_tool = ScavioRedditPostCommentsTool(max_results=20)
+comments = comments_tool.run(post_id="t3_1v6ngaf", sort="TOP")
+
+# cursor is REQUIRED here and must be a comment's reply_cursor,
+# not the feed's next_cursor.
+replies_tool = ScavioRedditCommentRepliesTool()
+replies = replies_tool.run(post_id="t3_1v6ngaf", cursor="<reply_cursor>")
+```
+
+The subreddit and user feeds return `data.posts`, not `data.results`. Sort
+values are uppercase, and `RISING` exists on the subreddit feed only.
+
+### Google Maps
+
+Maps is a two-step lookup: search for the business, then use the `place_id` or
+`data_id` it returns. Google responses are flat -- there is no `data` wrapper.
+
+```python
+from crewai_scavio import ScavioGoogleMapsReviewsTool, ScavioGoogleMapsSearchTool
+
+maps_tool = ScavioGoogleMapsSearchTool(max_results=5)
+places = maps_tool.run(query="coffee in brooklyn", gl="us")
+
+reviews_tool = ScavioGoogleMapsReviewsTool(max_results=20)
+reviews = reviews_tool.run(place_id="<place_id>", sort_by="newest")
 ```
 
 ### TikTok Shop
@@ -200,9 +287,10 @@ tool = ScavioSearchTool(api_key="sk_live_...", max_results=10)
 
 [Scavio](https://scavio.dev) is a unified [search API](https://scavio.dev/docs/search-api) built for AI agents — one API key, structured JSON, no scraping or proxies. A real-time [Tavily alternative](https://scavio.dev/alternatives/tavily) and [SerpAPI alternative](https://scavio.dev/alternatives/serpapi) with data from:
 
-- [Google Search API](https://scavio.dev/google-search-api) — SERP results, news, images, maps, and knowledge graph
+- [Google Search API](https://scavio.dev/google-search-api) — SERP results, AI Mode, news, maps, shopping, flights, hotels, and trends
 - [Amazon Product API](https://scavio.dev/amazon-product-api) and [Walmart Product API](https://scavio.dev/walmart-product-api) — product search and details
 - [YouTube API](https://scavio.dev/youtube-transcript-api), [TikTok API](https://scavio.dev/tiktok-api), and [Instagram API](https://scavio.dev/instagram-api) — video and social media data
-- [Reddit API](https://scavio.dev/reddit-api) — posts and threaded comments
+- [Reddit API](https://scavio.dev/reddit-api) — posts, threaded comments, subreddit and user feeds
+- X (Twitter) and LinkedIn — tweets, profiles, timelines, company pages, and jobs
 
 Get a free [API key](https://dashboard.scavio.dev) and explore the [documentation](https://scavio.dev/docs/introduction). You can also [compare Scavio vs alternatives](https://scavio.dev/compare) on coverage and pricing.

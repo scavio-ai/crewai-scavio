@@ -7,7 +7,22 @@ from crewai_scavio.amazon import (
     ScavioAmazonProductTool,
     ScavioAmazonSearchTool,
 )
-from crewai_scavio.google import ScavioSearchTool
+from crewai_scavio.google import (
+    ScavioGoogleAiModeTool,
+    ScavioGoogleFlightsTool,
+    ScavioGoogleHotelsDetailTool,
+    ScavioGoogleHotelsTool,
+    ScavioGoogleMapsPlaceTool,
+    ScavioGoogleMapsReviewsTool,
+    ScavioGoogleMapsSearchTool,
+    ScavioGoogleNewsTool,
+    ScavioGoogleShoppingProductTool,
+    ScavioGoogleShoppingStoresTool,
+    ScavioGoogleShoppingTool,
+    ScavioGoogleTrendingTool,
+    ScavioGoogleTrendsTool,
+    ScavioSearchTool,
+)
 from crewai_scavio.instagram import (
     ScavioInstagramCommentRepliesTool,
     ScavioInstagramPostCommentsTool,
@@ -33,7 +48,20 @@ from crewai_scavio.linkedin import (
     ScavioLinkedInPostTool,
     ScavioLinkedInSearchJobsTool,
 )
-from crewai_scavio.reddit import ScavioRedditPostTool, ScavioRedditSearchTool
+from crewai_scavio.reddit import (
+    ScavioRedditCommentRepliesTool,
+    ScavioRedditPopularTool,
+    ScavioRedditPostCommentsTool,
+    ScavioRedditPostTool,
+    ScavioRedditSearchSuggestionsTool,
+    ScavioRedditSearchTool,
+    ScavioRedditSubredditPostsTool,
+    ScavioRedditSubredditTool,
+    ScavioRedditTrendingTool,
+    ScavioRedditUserCommentsTool,
+    ScavioRedditUserPostsTool,
+    ScavioRedditUserTool,
+)
 from crewai_scavio.tiktok import (
     ScavioTikTokCommentRepliesTool,
     ScavioTikTokHashtagTool,
@@ -58,15 +86,6 @@ from crewai_scavio.tiktok_shop import (
     ScavioTikTokShopShopProductsTool,
 )
 from crewai_scavio.walmart import ScavioWalmartProductTool, ScavioWalmartSearchTool
-from crewai_scavio.youtube import (
-    ScavioYouTubeChannelTool,
-    ScavioYouTubeChannelVideosTool,
-    ScavioYouTubeCommentsTool,
-    ScavioYouTubeSearchTool,
-    ScavioYouTubeStreamsTool,
-    ScavioYouTubeTranscriptTool,
-    ScavioYouTubeVideoTool,
-)
 from crewai_scavio.x import (
     ScavioXSearchTool,
     ScavioXTrendingTool,
@@ -80,11 +99,41 @@ from crewai_scavio.x import (
     ScavioXUserTool,
     ScavioXUserTweetsTool,
 )
+from crewai_scavio.youtube import (
+    ScavioYouTubeChannelCommunityTool,
+    ScavioYouTubeChannelResolveTool,
+    ScavioYouTubeChannelSearchTool,
+    ScavioYouTubeChannelShortsTool,
+    ScavioYouTubeChannelTool,
+    ScavioYouTubeChannelVideosTool,
+    ScavioYouTubeCommentRepliesTool,
+    ScavioYouTubeCommentsTool,
+    ScavioYouTubeRelatedTool,
+    ScavioYouTubeSearchTool,
+    ScavioYouTubeShortsTool,
+    ScavioYouTubeStreamsTool,
+    ScavioYouTubeSuggestionsTool,
+    ScavioYouTubeTranscriptTool,
+    ScavioYouTubeVideoTool,
+)
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 __all__ = [
     "ScavioSearchTool",
+    "ScavioGoogleAiModeTool",
+    "ScavioGoogleMapsSearchTool",
+    "ScavioGoogleMapsPlaceTool",
+    "ScavioGoogleMapsReviewsTool",
+    "ScavioGoogleShoppingTool",
+    "ScavioGoogleShoppingProductTool",
+    "ScavioGoogleShoppingStoresTool",
+    "ScavioGoogleFlightsTool",
+    "ScavioGoogleHotelsTool",
+    "ScavioGoogleHotelsDetailTool",
+    "ScavioGoogleNewsTool",
+    "ScavioGoogleTrendsTool",
+    "ScavioGoogleTrendingTool",
     "ScavioAmazonSearchTool",
     "ScavioAmazonProductTool",
     "ScavioAmazonOffersTool",
@@ -95,10 +144,28 @@ __all__ = [
     "ScavioYouTubeChannelTool",
     "ScavioYouTubeChannelVideosTool",
     "ScavioYouTubeStreamsTool",
+    "ScavioYouTubeShortsTool",
+    "ScavioYouTubeSuggestionsTool",
+    "ScavioYouTubeCommentRepliesTool",
+    "ScavioYouTubeRelatedTool",
+    "ScavioYouTubeChannelSearchTool",
+    "ScavioYouTubeChannelShortsTool",
+    "ScavioYouTubeChannelCommunityTool",
+    "ScavioYouTubeChannelResolveTool",
     "ScavioWalmartSearchTool",
     "ScavioWalmartProductTool",
     "ScavioRedditSearchTool",
+    "ScavioRedditSearchSuggestionsTool",
     "ScavioRedditPostTool",
+    "ScavioRedditPostCommentsTool",
+    "ScavioRedditCommentRepliesTool",
+    "ScavioRedditSubredditTool",
+    "ScavioRedditSubredditPostsTool",
+    "ScavioRedditUserTool",
+    "ScavioRedditUserPostsTool",
+    "ScavioRedditUserCommentsTool",
+    "ScavioRedditPopularTool",
+    "ScavioRedditTrendingTool",
     "ScavioTikTokProfileTool",
     "ScavioTikTokUserPostsTool",
     "ScavioTikTokVideoTool",
