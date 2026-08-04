@@ -21,6 +21,7 @@ from crewai_scavio.google import (
     ScavioGoogleShoppingTool,
     ScavioGoogleTrendingTool,
     ScavioGoogleTrendsTool,
+    ScavioSearchInput,
     ScavioSearchTool,
 )
 from tests.conftest import (
@@ -153,6 +154,121 @@ class TestScavioSearchTool:
         result = await tool._arun(query="test")
         parsed = json.loads(result)
         assert len(parsed["organic_results"]) == 2
+
+    def test_schema_exposes_every_native_v2_param(self):
+        """Every v2 Google Search param is agent-visible, not constructor-only."""
+        assert set(ScavioSearchInput.model_fields) == {
+            "query",
+            "gl",
+            "hl",
+            "start",
+            "google_domain",
+            "device",
+            "location",
+            "uule",
+            "lr",
+            "cr",
+            "safe",
+            "filter",
+            "time_period",
+            "nfpr",
+            "include_html",
+            "resolve_ai_overview",
+        }
+
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    def test_native_params_reach_the_api(self, mock_async, mock_client_cls):
+        """Test that per-call native v2 params are forwarded verbatim."""
+        mock_client = MagicMock()
+        mock_client.google.search.return_value = mock_search_response()
+        mock_client_cls.return_value = mock_client
+
+        tool = ScavioSearchTool(api_key=MOCK_API_KEY)
+        tool._run(
+            query="test query",
+            gl="de",
+            hl="de",
+            start=20,
+            google_domain="google.de",
+            device="mobile",
+            location="Berlin, Germany",
+            uule="w+CAIQICI",
+            lr="lang_de",
+            cr="countryDE",
+            safe="active",
+            filter="0",
+            time_period="last_week",
+            nfpr=True,
+            include_html=True,
+            resolve_ai_overview=False,
+        )
+
+        _, kwargs = mock_client.google.search.call_args
+        assert kwargs["gl"] == "de"
+        assert kwargs["hl"] == "de"
+        assert kwargs["start"] == 20
+        assert kwargs["google_domain"] == "google.de"
+        assert kwargs["device"] == "mobile"
+        assert kwargs["location"] == "Berlin, Germany"
+        assert kwargs["uule"] == "w+CAIQICI"
+        assert kwargs["lr"] == "lang_de"
+        assert kwargs["cr"] == "countryDE"
+        assert kwargs["safe"] == "active"
+        assert kwargs["filter"] == "0"
+        assert kwargs["time_period"] == "last_week"
+        assert kwargs["nfpr"] is True
+        assert kwargs["include_html"] is True
+        # An explicit False must survive the None filter.
+        assert kwargs["resolve_ai_overview"] is False
+
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    def test_call_args_beat_constructor_defaults(
+        self, mock_async, mock_client_cls
+    ):
+        """Test that agent-supplied params win over the v1 alias defaults."""
+        mock_client = MagicMock()
+        mock_client.google.search.return_value = mock_search_response()
+        mock_client_cls.return_value = mock_client
+
+        tool = ScavioSearchTool(
+            api_key=MOCK_API_KEY,
+            country_code="fr",
+            language="fr",
+            page=3,
+            device="desktop",
+        )
+        tool._run(query="test query", gl="us", hl="en", start=0, device="mobile")
+
+        _, kwargs = mock_client.google.search.call_args
+        assert kwargs["gl"] == "us"
+        assert kwargs["hl"] == "en"
+        assert kwargs["start"] == 0
+        assert kwargs["device"] == "mobile"
+
+    @pytest.mark.asyncio
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    async def test_arun_forwards_native_params(
+        self, mock_async_cls, mock_client
+    ):
+        """Test that the async path forwards native params too."""
+        mock_async_client = MagicMock()
+        mock_async_client.google.search = AsyncMock(
+            return_value=mock_search_response()
+        )
+        mock_async_cls.return_value = mock_async_client
+
+        tool = ScavioSearchTool(api_key=MOCK_API_KEY)
+        await tool._arun(query="test", start=10, safe="active")
+
+        _, kwargs = mock_async_client.google.search.call_args
+        assert kwargs["start"] == 10
+        assert kwargs["safe"] == "active"
 
     @patch("crewai_scavio._base.SCAVIO_AVAILABLE", False)
     def test_raises_import_error(self):

@@ -15,6 +15,7 @@ from crewai_scavio.youtube import (
     ScavioYouTubeCommentRepliesTool,
     ScavioYouTubeCommentsTool,
     ScavioYouTubeRelatedTool,
+    ScavioYouTubeSearchInput,
     ScavioYouTubeSearchTool,
     ScavioYouTubeShortsTool,
     ScavioYouTubeStreamsTool,
@@ -67,6 +68,105 @@ class TestScavioYouTubeSearchTool:
         result = tool._run(query="python tutorial")
         parsed = json.loads(result)
         assert len(parsed["data"]["results"]) == 3
+
+    def test_schema_exposes_every_search_param(self):
+        """Every /youtube/search param is agent-visible, not constructor-only."""
+        assert set(ScavioYouTubeSearchInput.model_fields) == {
+            "query",
+            "cursor",
+            "sort_by",
+            "type",
+            "duration",
+            "upload_date",
+            "features",
+            "hd",
+            "four_k",
+            "subtitles",
+            "creative_commons",
+            "live",
+            "hdr",
+            "vr180",
+            "video_360",
+            "video_3d",
+        }
+
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    def test_filters_and_cursor_reach_the_api(self, mock_async, mock_client_cls):
+        """Test that per-call filters, features and cursor are forwarded."""
+        mock_client = MagicMock()
+        mock_client.youtube.search.return_value = mock_youtube_search_response()
+        mock_client_cls.return_value = mock_client
+
+        tool = ScavioYouTubeSearchTool(api_key=MOCK_API_KEY)
+        tool._run(
+            query="python tutorial",
+            cursor="CURSOR_2",
+            sort_by="view_count",
+            type="video",
+            duration="long",
+            upload_date="this_week",
+            features=["hd", "subtitles"],
+            hd=True,
+            four_k=True,
+            subtitles=True,
+            creative_commons=True,
+            live=False,
+            hdr=True,
+            vr180=True,
+            video_360=True,
+            video_3d=True,
+        )
+
+        _, kwargs = mock_client.youtube.search.call_args
+        assert kwargs["cursor"] == "CURSOR_2"
+        assert kwargs["sort_by"] == "view_count"
+        assert kwargs["type"] == "video"
+        assert kwargs["duration"] == "long"
+        assert kwargs["upload_date"] == "this_week"
+        assert kwargs["features"] == ["hd", "subtitles"]
+        assert kwargs["hd"] is True
+        assert kwargs["four_k"] is True
+        assert kwargs["subtitles"] is True
+        assert kwargs["creative_commons"] is True
+        assert kwargs["live"] is False
+        assert kwargs["hdr"] is True
+        assert kwargs["vr180"] is True
+        assert kwargs["video_360"] is True
+        assert kwargs["video_3d"] is True
+
+    @patch("crewai_scavio._base.ScavioClient")
+    @patch("crewai_scavio._base.AsyncScavioClient")
+    @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
+    def test_call_args_beat_constructor_defaults(
+        self, mock_async, mock_client_cls
+    ):
+        """Test that constructor filters remain defaults an agent can override."""
+        mock_client = MagicMock()
+        mock_client.youtube.search.return_value = mock_youtube_search_response()
+        mock_client_cls.return_value = mock_client
+
+        tool = ScavioYouTubeSearchTool(
+            api_key=MOCK_API_KEY,
+            sort_by="date",
+            type="channel",
+            duration="short",
+            upload_date="today",
+        )
+
+        tool._run(query="python tutorial")
+        _, kwargs = mock_client.youtube.search.call_args
+        assert kwargs["sort_by"] == "date"
+        assert kwargs["type"] == "channel"
+        assert kwargs["duration"] == "short"
+        assert kwargs["upload_date"] == "today"
+
+        tool._run(query="python tutorial", sort_by="rating", type="playlist")
+        _, kwargs = mock_client.youtube.search.call_args
+        assert kwargs["sort_by"] == "rating"
+        assert kwargs["type"] == "playlist"
+        assert kwargs["duration"] == "short"
 
 
 class TestScavioYouTubeVideoTool:

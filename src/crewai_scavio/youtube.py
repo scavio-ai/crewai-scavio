@@ -16,6 +16,57 @@ class ScavioYouTubeSearchInput(BaseModel):
     """Input schema for ScavioYouTubeSearchTool."""
 
     query: str = Field(..., description="The YouTube search query.")
+    cursor: str | None = Field(
+        default=None,
+        description=(
+            "Pagination cursor -- pass data.next_cursor from the previous "
+            "search response to fetch the next page."
+        ),
+    )
+    sort_by: Literal["relevance", "date", "view_count", "rating"] | None = Field(
+        default=None,
+        description="Sort order; defaults to the tool's sort_by.",
+    )
+    type: Literal["video", "channel", "playlist", "movie"] | None = Field(
+        default=None,
+        description="Restrict results to one result type.",
+    )
+    duration: Literal["short", "medium", "long"] | None = Field(
+        default=None,
+        description="short (<4 min), medium (4-20 min), long (>20 min).",
+    )
+    upload_date: Literal[
+        "last_hour", "today", "this_week", "this_month", "this_year"
+    ] | None = Field(
+        default=None,
+        description="Only videos uploaded within this window.",
+    )
+    features: list[str] | None = Field(
+        default=None,
+        description=(
+            "Feature filters as a list; allowed values: hd, 4k, subtitles, "
+            "creative_commons, live, 360, 3d, hdr, vr180."
+        ),
+    )
+    hd: bool | None = Field(default=None, description="HD videos only.")
+    four_k: bool | None = Field(default=None, description="4K videos only.")
+    subtitles: bool | None = Field(
+        default=None, description="Videos with subtitles/CC only."
+    )
+    creative_commons: bool | None = Field(
+        default=None, description="Creative Commons licensed videos only."
+    )
+    live: bool | None = Field(
+        default=None, description="Live videos only."
+    )
+    hdr: bool | None = Field(default=None, description="HDR videos only.")
+    vr180: bool | None = Field(default=None, description="VR180 videos only.")
+    video_360: bool | None = Field(
+        default=None, description="360-degree videos only."
+    )
+    video_3d: bool | None = Field(
+        default=None, description="3D videos only."
+    )
 
 
 class ScavioYouTubeVideoInput(BaseModel):
@@ -158,20 +209,46 @@ class ScavioYouTubeChannelResolveInput(BaseModel):
 # 1. Search
 # ---------------------------------------------------------------------------
 
+# Search params an agent may set per call. A value passed here wins over the
+# developer-set constructor default of the same name.
+_SEARCH_PARAM_NAMES: tuple[str, ...] = (
+    "cursor",
+    "sort_by",
+    "type",
+    "duration",
+    "upload_date",
+    "features",
+    "hd",
+    "four_k",
+    "subtitles",
+    "creative_commons",
+    "live",
+    "hdr",
+    "vr180",
+    "video_360",
+    "video_3d",
+)
+
+
 class ScavioYouTubeSearchTool(ScavioBaseTool):
     """YouTube video search tool powered by the Scavio YouTube API.
 
+    Every search param lives in ``args_schema`` so an agent can vary it per
+    call. The attributes below stay as developer-set defaults for when the
+    agent omits the matching argument.
+
     Attributes:
-        upload_date: Filter by upload date (e.g. 'hour', 'today', 'week').
-        sort_by: Sort order for search results.
-        type: Content type filter (e.g. 'video', 'channel', 'playlist').
-        duration: Duration filter (e.g. 'short', 'medium', 'long').
+        upload_date: Default upload-date filter.
+        sort_by: Default sort order for search results.
+        type: Default result-type filter.
+        duration: Default duration filter.
     """
 
     name: str = "Scavio YouTube Search"
     description: str = (
         "Search for videos on YouTube using the Scavio YouTube API. "
-        "Returns video titles, channels, view counts, and more."
+        "Returns video titles, channels, view counts, and more. Page with "
+        "cursor: pass data.next_cursor from the previous response."
     )
     args_schema: Type[BaseModel] = ScavioYouTubeSearchInput
 
@@ -180,21 +257,39 @@ class ScavioYouTubeSearchTool(ScavioBaseTool):
     type: str | None = None
     duration: str | None = None
 
+    def _build_params(self, **overrides: Any) -> dict[str, Any]:
+        """Layer per-call arguments over the developer-set defaults.
+
+        Args:
+            **overrides: Search params supplied for this call.
+
+        Returns:
+            Keyword arguments for ``client.youtube.search``.
+        """
+        params: dict[str, Any] = {
+            "upload_date": self.upload_date,
+            "sort_by": self.sort_by,
+            "type": self.type,
+            "duration": self.duration,
+        }
+        for name in _SEARCH_PARAM_NAMES:
+            value = overrides.get(name)
+            if value is not None:
+                params[name] = value
+        return params
+
     def _run(self, query: str, **kwargs: Any) -> str:
         """Execute a synchronous YouTube search.
 
         Args:
             query: The YouTube search query.
+            **kwargs: Optional cursor / sort / filter / feature params.
 
         Returns:
             JSON-serialised search results.
         """
         raw = self.client.youtube.search(
-            query=query,
-            upload_date=self.upload_date,
-            sort_by=self.sort_by,
-            type=self.type,
-            duration=self.duration,
+            query=query, **self._build_params(**kwargs)
         )
         raw = self._truncate_nested(raw, "data", "results")
         return self._format_response(raw)
@@ -204,16 +299,13 @@ class ScavioYouTubeSearchTool(ScavioBaseTool):
 
         Args:
             query: The YouTube search query.
+            **kwargs: Optional cursor / sort / filter / feature params.
 
         Returns:
             JSON-serialised search results.
         """
         raw = await self.async_client.youtube.search(
-            query=query,
-            upload_date=self.upload_date,
-            sort_by=self.sort_by,
-            type=self.type,
-            duration=self.duration,
+            query=query, **self._build_params(**kwargs)
         )
         raw = self._truncate_nested(raw, "data", "results")
         return self._format_response(raw)

@@ -174,13 +174,94 @@ offers = offers_tool.run(asin="B08N5WRWNW")
 > normalized now -- `price` is a number with a sibling `currency`, not an
 > object, and `buybox` is gone (use `ScavioAmazonOffersTool`).
 
+### Google Web Search
+
+Every native v2 param -- `gl`, `hl`, `start`, `google_domain`, `device`,
+`location`, `uule`, `lr`, `cr`, `safe`, `filter`, `time_period`, `nfpr`,
+`include_html`, `resolve_ai_overview` -- is an argument the agent can set per
+call. `start` is a result OFFSET, not a page number: 0 is page 1, 10 is page 2.
+
+```python
+from crewai_scavio import ScavioSearchTool
+
+search_tool = ScavioSearchTool(max_results=10)
+page_two = search_tool.run(
+    query="best running shoes",
+    gl="de",
+    hl="de",
+    start=10,
+    time_period="last_week",
+)
+```
+
+Constructor values are defaults for when the agent omits an argument. The v1
+spellings `country_code`, `language` and `page` still work there and seed `gl`,
+`hl` and `start`; anything the agent passes wins.
+
 ### YouTube Video Search
+
+`sort_by`, `type`, `duration` and `upload_date` moved into the tool's argument
+schema in 0.7.0, alongside `cursor` and the feature flags (`hd`, `four_k`,
+`subtitles`, `creative_commons`, `live`, `hdr`, `vr180`, `video_360`,
+`video_3d`, and the `features` list). Setting them on the constructor still
+works as a default.
 
 ```python
 from crewai_scavio import ScavioYouTubeSearchTool
 
 youtube_tool = ScavioYouTubeSearchTool(max_results=5, sort_by="relevance")
-result = youtube_tool.run("CrewAI tutorial")
+
+result = youtube_tool.run(
+    query="CrewAI tutorial",
+    sort_by="view_count",
+    duration="long",
+    upload_date="this_month",
+)
+
+# Page 2: pass back data.next_cursor from the previous response.
+more = youtube_tool.run(query="CrewAI tutorial", cursor="<next_cursor>")
+```
+
+### TikTok Pagination
+
+TikTok's `cursor` is a STRING -- `"0"` for the first page, then the `cursor`
+value the previous response returned. A numeric cursor is a 400. `count` is a
+number, capped per endpoint (30 on the video lists, 50 on comments, 20 on the
+follow lists).
+
+```python
+from crewai_scavio import ScavioTikTokSearchVideosTool, ScavioTikTokUserFollowersTool
+
+videos_tool = ScavioTikTokSearchVideosTool(max_results=20)
+page_two = videos_tool.run(
+    keyword="cooking recipe", cursor="20", count=30, publish_time="7"
+)
+
+# Followers/followings break the pattern: no cursor, page with
+# page_token plus min_time instead.
+followers_tool = ScavioTikTokUserFollowersTool(max_results=20)
+followers = followers_tool.run(
+    sec_user_id="<sec_user_id>", page_token="<next_page_token>", min_time=1720000000
+)
+```
+
+### Walmart Product Search
+
+`start_page` is the only pagination field -- Walmart has no `page`. Price,
+fulfillment and store filters are agent-visible arguments.
+
+```python
+from crewai_scavio import ScavioWalmartSearchTool
+
+walmart_tool = ScavioWalmartSearchTool(max_results=10)
+result = walmart_tool.run(
+    query="air fryer",
+    start_page=2,
+    sort_by="price_low",
+    min_price=50,
+    max_price=200,
+    delivery_zip="10001",
+)
 ```
 
 ### Reddit Search

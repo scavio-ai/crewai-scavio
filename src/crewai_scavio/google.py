@@ -20,12 +20,110 @@ from pydantic import BaseModel, Field
 
 from crewai_scavio._base import ScavioBaseTool
 
+# ---------------------------------------------------------------------------
+# Shared parameter descriptions
+# ---------------------------------------------------------------------------
+
+_HL_DESCRIPTION = "UI language (ISO 639-1, e.g. 'en')."
+_GL_DESCRIPTION = "Country of the search (ISO 3166-1 alpha-2, e.g. 'us')."
+_GOOGLE_DOMAIN_DESCRIPTION = "Regional Google domain (e.g. 'google.co.uk')."
+_LOCATION_DESCRIPTION = (
+    "Canonical location name; auto-encoded to a UULE string."
+)
+_UULE_DESCRIPTION = (
+    "Pre-encoded UULE location string (takes priority over location)."
+)
+_CURRENCY_DESCRIPTION = "Currency code (ISO 4217, e.g. 'USD')."
+
 
 class ScavioSearchInput(BaseModel):
     """Input schema for ScavioSearchTool."""
 
     query: str = Field(..., description="The search query string.")
+    gl: str | None = Field(default=None, description=_GL_DESCRIPTION)
+    hl: str | None = Field(default=None, description=_HL_DESCRIPTION)
+    start: int | None = Field(
+        default=None,
+        description=(
+            "Result offset, NOT a page number: 0 = page 1, 10 = page 2, "
+            "20 = page 3, up to 990."
+        ),
+    )
+    google_domain: str | None = Field(
+        default=None, description=_GOOGLE_DOMAIN_DESCRIPTION
+    )
+    device: Literal["desktop", "mobile"] | None = Field(
+        default=None,
+        description="Device to emulate; falls back to the tool default.",
+    )
+    location: str | None = Field(
+        default=None, description=_LOCATION_DESCRIPTION
+    )
+    uule: str | None = Field(default=None, description=_UULE_DESCRIPTION)
+    lr: str | None = Field(
+        default=None,
+        description="Restrict results to one language (e.g. 'lang_en').",
+    )
+    cr: str | None = Field(
+        default=None,
+        description="Restrict results to one country (e.g. 'countryUS').",
+    )
+    safe: Literal["active"] | None = Field(
+        default=None,
+        description="SafeSearch filter; 'active' is the only value.",
+    )
+    filter: Literal["0", "1"] | None = Field(
+        default=None,
+        description=(
+            "'0' returns the near-duplicate results Google normally omits; "
+            "'1' keeps the filter on."
+        ),
+    )
+    time_period: Literal[
+        "last_hour", "last_day", "last_week", "last_month", "last_year"
+    ] | None = Field(
+        default=None,
+        description="Restrict results to a recent time window.",
+    )
+    nfpr: bool | None = Field(
+        default=None,
+        description=(
+            "True searches the query verbatim, without Google's spelling "
+            "correction."
+        ),
+    )
+    include_html: bool | None = Field(
+        default=None,
+        description="Include the raw Google HTML in the response (large).",
+    )
+    resolve_ai_overview: bool | None = Field(
+        default=None,
+        description=(
+            "Resolve a deferred AI Overview with a second fetch "
+            "(server default True)."
+        ),
+    )
 
+
+# Native v2 params an agent may set per call. Anything set here wins over the
+# developer-set constructor defaults below.
+_SEARCH_PARAM_NAMES: tuple[str, ...] = (
+    "gl",
+    "hl",
+    "start",
+    "google_domain",
+    "device",
+    "location",
+    "uule",
+    "lr",
+    "cr",
+    "safe",
+    "filter",
+    "time_period",
+    "nfpr",
+    "include_html",
+    "resolve_ai_overview",
+)
 
 # Mapping from include_* field names to their corresponding response keys.
 _INCLUDE_FIELD_TO_KEY: dict[str, str] = {
@@ -54,6 +152,12 @@ _LIST_KEYS: list[str] = [
 
 class ScavioSearchTool(ScavioBaseTool):
     """Web search tool powered by the Scavio Google Search API (v2).
+
+    Every native v2 param lives in ``args_schema`` so an agent can vary it per
+    call. The attributes below are developer-set defaults used when the agent
+    omits the matching argument; ``country_code``, ``language`` and ``page``
+    are v1 spellings kept for backwards compatibility and seed ``gl``, ``hl``
+    and ``start``.
 
     Attributes:
         country_code: Two-letter country code for localised results (maps to gl).
@@ -102,8 +206,11 @@ class ScavioSearchTool(ScavioBaseTool):
     include_bottom_ads: bool = False
     nfpr: bool = False
 
-    def _build_params(self) -> dict[str, Any]:
-        """Map public tool attributes to v2 Google Search wire params.
+    def _build_params(self, **overrides: Any) -> dict[str, Any]:
+        """Layer per-call arguments over the developer-set defaults.
+
+        Args:
+            **overrides: Native v2 params supplied for this call.
 
         Returns:
             Keyword arguments for ``client.google.search``.
@@ -118,6 +225,10 @@ class ScavioSearchTool(ScavioBaseTool):
             params["hl"] = self.language
         if self.page and self.page > 1:
             params["start"] = (self.page - 1) * 10
+        for name in _SEARCH_PARAM_NAMES:
+            value = overrides.get(name)
+            if value is not None:
+                params[name] = value
         return params
 
     def _run(self, query: str, **kwargs: Any) -> str:
@@ -125,11 +236,14 @@ class ScavioSearchTool(ScavioBaseTool):
 
         Args:
             query: The search query string.
+            **kwargs: Optional native v2 locale / paging / filter params.
 
         Returns:
             JSON-serialised search results.
         """
-        raw = self.client.google.search(query=query, **self._build_params())
+        raw = self.client.google.search(
+            query=query, **self._build_params(**kwargs)
+        )
         return self._format_response(self._post_process(raw))
 
     async def _arun(self, query: str, **kwargs: Any) -> str:
@@ -137,12 +251,13 @@ class ScavioSearchTool(ScavioBaseTool):
 
         Args:
             query: The search query string.
+            **kwargs: Optional native v2 locale / paging / filter params.
 
         Returns:
             JSON-serialised search results.
         """
         raw = await self.async_client.google.search(
-            query=query, **self._build_params()
+            query=query, **self._build_params(**kwargs)
         )
         return self._format_response(self._post_process(raw))
 
@@ -168,18 +283,6 @@ class ScavioSearchTool(ScavioBaseTool):
 # ---------------------------------------------------------------------------
 # Input schemas for the rest of the Google v2 family
 # ---------------------------------------------------------------------------
-
-_HL_DESCRIPTION = "UI language (ISO 639-1, e.g. 'en')."
-_GL_DESCRIPTION = "Country of the search (ISO 3166-1 alpha-2, e.g. 'us')."
-_GOOGLE_DOMAIN_DESCRIPTION = "Regional Google domain (e.g. 'google.co.uk')."
-_LOCATION_DESCRIPTION = (
-    "Canonical location name; auto-encoded to a UULE string."
-)
-_UULE_DESCRIPTION = (
-    "Pre-encoded UULE location string (takes priority over location)."
-)
-_CURRENCY_DESCRIPTION = "Currency code (ISO 4217, e.g. 'USD')."
-
 
 class ScavioGoogleAiModeInput(BaseModel):
     """Input schema for ScavioGoogleAiModeTool."""

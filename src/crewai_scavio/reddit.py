@@ -19,7 +19,6 @@ from pydantic import BaseModel, Field
 
 from crewai_scavio._base import ScavioBaseTool
 
-
 _CURSOR_DESCRIPTION = (
     "Pagination cursor -- pass next_cursor from a previous response."
 )
