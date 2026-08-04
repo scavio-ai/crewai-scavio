@@ -1,4 +1,17 @@
-"""Scavio Google Search tool for CrewAI."""
+"""Scavio Google tools for CrewAI.
+
+All fourteen Google endpoints run on v2 (``/api/v2/google*``) and cost 1 credit
+each. Google v1 was retired on 2026-08-04 and now answers HTTP 410, so its
+parameter names -- ``light_request``, ``country_code``, ``language``,
+``search_type``, ``page`` -- are gone. v2 speaks ``gl``, ``hl``, ``start``,
+``google_domain`` and ``device`` instead, and the v1 response block ``results[]``
+with ``url``/``content`` is now ``organic_results[]`` with ``link``/``snippet``.
+
+Google responses are FLAT: the payload sits at the top level next to
+``response_time``, ``credits_used``, ``credits_remaining`` and ``cached``.
+There is no ``data`` wrapper anywhere in this family, unlike every other Scavio
+product area.
+"""
 
 
 from typing import Any, Literal, Type

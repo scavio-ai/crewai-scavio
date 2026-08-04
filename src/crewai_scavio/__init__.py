@@ -22,6 +22,17 @@ from crewai_scavio.instagram import (
     ScavioInstagramUserPostsTool,
     ScavioInstagramUserReelsTool,
 )
+from crewai_scavio.linkedin import (
+    ScavioLinkedInCompanyPostsTool,
+    ScavioLinkedInCompanyTool,
+    ScavioLinkedInJobTool,
+    ScavioLinkedInPersonAboutTool,
+    ScavioLinkedInPersonPostsTool,
+    ScavioLinkedInPersonTool,
+    ScavioLinkedInPostCommentsTool,
+    ScavioLinkedInPostTool,
+    ScavioLinkedInSearchJobsTool,
+)
 from crewai_scavio.reddit import ScavioRedditPostTool, ScavioRedditSearchTool
 from crewai_scavio.tiktok import (
     ScavioTikTokCommentRepliesTool,
@@ -56,8 +67,21 @@ from crewai_scavio.youtube import (
     ScavioYouTubeTranscriptTool,
     ScavioYouTubeVideoTool,
 )
+from crewai_scavio.x import (
+    ScavioXSearchTool,
+    ScavioXTrendingTool,
+    ScavioXTweetCommentsTool,
+    ScavioXTweetRetweetersTool,
+    ScavioXTweetTool,
+    ScavioXUserFollowersTool,
+    ScavioXUserFollowingsTool,
+    ScavioXUserMediaTool,
+    ScavioXUserRepliesTool,
+    ScavioXUserTool,
+    ScavioXUserTweetsTool,
+)
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 __all__ = [
     "ScavioSearchTool",
@@ -106,4 +130,24 @@ __all__ = [
     "ScavioInstagramSearchHashtagsTool",
     "ScavioInstagramUserFollowersTool",
     "ScavioInstagramUserFollowingsTool",
+    "ScavioLinkedInCompanyPostsTool",
+    "ScavioLinkedInCompanyTool",
+    "ScavioLinkedInJobTool",
+    "ScavioLinkedInPersonAboutTool",
+    "ScavioLinkedInPersonPostsTool",
+    "ScavioLinkedInPersonTool",
+    "ScavioLinkedInPostCommentsTool",
+    "ScavioLinkedInPostTool",
+    "ScavioLinkedInSearchJobsTool",
+    "ScavioXSearchTool",
+    "ScavioXTrendingTool",
+    "ScavioXTweetCommentsTool",
+    "ScavioXTweetRetweetersTool",
+    "ScavioXTweetTool",
+    "ScavioXUserFollowersTool",
+    "ScavioXUserFollowingsTool",
+    "ScavioXUserMediaTool",
+    "ScavioXUserRepliesTool",
+    "ScavioXUserTool",
+    "ScavioXUserTweetsTool",
 ]
