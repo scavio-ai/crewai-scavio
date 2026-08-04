@@ -18,8 +18,8 @@ class ScavioYouTubeSearchInput(BaseModel):
     query: str = Field(..., description="The YouTube search query.")
 
 
-class ScavioYouTubeMetadataInput(BaseModel):
-    """Input schema for ScavioYouTubeMetadataTool."""
+class ScavioYouTubeVideoInput(BaseModel):
+    """Input schema for ScavioYouTubeVideoTool."""
 
     video_id: str = Field(
         ..., description="The YouTube video ID or full watch URL."
@@ -140,25 +140,25 @@ class ScavioYouTubeSearchTool(ScavioBaseTool):
 
 
 # ---------------------------------------------------------------------------
-# 2. Metadata (video)
+# 2. Video
 # ---------------------------------------------------------------------------
 
-class ScavioYouTubeMetadataTool(ScavioBaseTool):
-    """YouTube video metadata tool powered by the Scavio YouTube API.
+class ScavioYouTubeVideoTool(ScavioBaseTool):
+    """YouTube video tool powered by the Scavio YouTube API.
 
     Retrieves detailed metadata for a single YouTube video by its ID.
     Accepts either a video ID or a full watch URL.
     """
 
-    name: str = "Scavio YouTube Metadata"
+    name: str = "Scavio YouTube Video"
     description: str = (
         "Get detailed metadata for a YouTube video by its video ID or "
         "watch URL using the Scavio YouTube API."
     )
-    args_schema: Type[BaseModel] = ScavioYouTubeMetadataInput
+    args_schema: Type[BaseModel] = ScavioYouTubeVideoInput
 
     def _run(self, video_id: str, **kwargs: Any) -> str:
-        """Fetch video metadata synchronously.
+        """Fetch video details synchronously.
 
         Args:
             video_id: The YouTube video ID or watch URL.
@@ -166,11 +166,11 @@ class ScavioYouTubeMetadataTool(ScavioBaseTool):
         Returns:
             JSON-serialised video metadata.
         """
-        raw = self.client.youtube.metadata(video_id=video_id)
+        raw = self.client.youtube.video(video_id=video_id)
         return self._format_response(raw)
 
     async def _arun(self, video_id: str, **kwargs: Any) -> str:
-        """Fetch video metadata asynchronously.
+        """Fetch video details asynchronously.
 
         Args:
             video_id: The YouTube video ID or watch URL.
@@ -178,7 +178,7 @@ class ScavioYouTubeMetadataTool(ScavioBaseTool):
         Returns:
             JSON-serialised video metadata.
         """
-        raw = await self.async_client.youtube.metadata(video_id=video_id)
+        raw = await self.async_client.youtube.video(video_id=video_id)
         return self._format_response(raw)
 
 

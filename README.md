@@ -57,7 +57,7 @@ print(result)
 | Amazon | `ScavioAmazonProductTool` | Product details by ASIN |
 | Amazon | `ScavioAmazonOffersTool` | Every seller offer for an ASIN, including the buy-box winner |
 | YouTube | `ScavioYouTubeSearchTool` | Video search with filters |
-| YouTube | `ScavioYouTubeMetadataTool` | Video metadata by ID or watch URL |
+| YouTube | `ScavioYouTubeVideoTool` | Video metadata by ID or watch URL |
 | YouTube | `ScavioYouTubeCommentsTool` | Video comments by ID |
 | YouTube | `ScavioYouTubeTranscriptTool` | Video transcript / captions by ID |
 | YouTube | `ScavioYouTubeChannelTool` | Channel details by ID, @handle, or URL |
@@ -65,8 +65,8 @@ print(result)
 | YouTube | `ScavioYouTubeStreamsTool` | Playable / downloadable stream formats |
 | Walmart | `ScavioWalmartSearchTool` | Product search with price/fulfillment filters |
 | Walmart | `ScavioWalmartProductTool` | Product details by ID |
-| Reddit | `ScavioRedditSearchTool` | Post and comment search |
-| Reddit | `ScavioRedditPostTool` | Post metadata and comments by URL |
+| Reddit | `ScavioRedditSearchTool` | Post search with cursor pagination |
+| Reddit | `ScavioRedditPostTool` | Post details by URL (no comments) |
 | TikTok | `ScavioTikTokProfileTool` | User profile lookup |
 | TikTok | `ScavioTikTokUserPostsTool` | User's posted videos |
 | TikTok | `ScavioTikTokVideoTool` | Video details |
@@ -134,10 +134,14 @@ result = youtube_tool.run("CrewAI tutorial")
 
 ### Reddit Search
 
+Results come back in relevance order under `data.results`. The endpoint takes
+only `query` and `cursor` -- there is no sort or result-type filter. Paginate
+by passing back the previous response's `data.next_cursor`.
+
 ```python
 from crewai_scavio import ScavioRedditSearchTool
 
-reddit_tool = ScavioRedditSearchTool(max_results=10, sort="hot")
+reddit_tool = ScavioRedditSearchTool(max_results=10)
 result = reddit_tool.run("AI agents")
 ```
 

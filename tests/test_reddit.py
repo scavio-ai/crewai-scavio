@@ -25,8 +25,8 @@ class TestScavioRedditSearchTool:
     @patch("crewai_scavio._base.ScavioClient")
     @patch("crewai_scavio._base.AsyncScavioClient")
     @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
-    def test_truncates_posts(self, mock_async, mock_client_cls):
-        """Test that posts are truncated to max_results."""
+    def test_truncates_results(self, mock_async, mock_client_cls):
+        """Test that results are truncated to max_results."""
         mock_client = MagicMock()
         mock_client.reddit.search.return_value = mock_reddit_search_response(10)
         mock_client_cls.return_value = mock_client
@@ -34,7 +34,10 @@ class TestScavioRedditSearchTool:
         tool = ScavioRedditSearchTool(api_key=MOCK_API_KEY, max_results=3)
         result = tool._run(query="python")
         parsed = json.loads(result)
-        assert len(parsed["data"]["posts"]) == 3
+        assert len(parsed["data"]["results"]) == 3
+        mock_client.reddit.search.assert_called_once_with(
+            query="python", cursor=None
+        )
 
 
 class TestScavioRedditPostTool:
@@ -52,4 +55,4 @@ class TestScavioRedditPostTool:
         tool = ScavioRedditPostTool(api_key=MOCK_API_KEY)
         result = tool._run(url="https://reddit.com/r/test/comments/abc/test")
         parsed = json.loads(result)
-        assert parsed["data"]["post"]["id"] == "post_1"
+        assert parsed["data"]["post_id"] == "t3_post_1"

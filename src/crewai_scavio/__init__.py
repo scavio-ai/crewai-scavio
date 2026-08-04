@@ -51,10 +51,10 @@ from crewai_scavio.youtube import (
     ScavioYouTubeChannelTool,
     ScavioYouTubeChannelVideosTool,
     ScavioYouTubeCommentsTool,
-    ScavioYouTubeMetadataTool,
     ScavioYouTubeSearchTool,
     ScavioYouTubeStreamsTool,
     ScavioYouTubeTranscriptTool,
+    ScavioYouTubeVideoTool,
 )
 
 __version__ = "0.4.0"
@@ -65,7 +65,7 @@ __all__ = [
     "ScavioAmazonProductTool",
     "ScavioAmazonOffersTool",
     "ScavioYouTubeSearchTool",
-    "ScavioYouTubeMetadataTool",
+    "ScavioYouTubeVideoTool",
     "ScavioYouTubeCommentsTool",
     "ScavioYouTubeTranscriptTool",
     "ScavioYouTubeChannelTool",

@@ -9,19 +9,19 @@ from crewai_scavio.youtube import (
     ScavioYouTubeChannelTool,
     ScavioYouTubeChannelVideosTool,
     ScavioYouTubeCommentsTool,
-    ScavioYouTubeMetadataTool,
     ScavioYouTubeSearchTool,
     ScavioYouTubeStreamsTool,
     ScavioYouTubeTranscriptTool,
+    ScavioYouTubeVideoTool,
 )
 from tests.conftest import (
     mock_youtube_channel_response,
     mock_youtube_channel_videos_response,
     mock_youtube_comments_response,
-    mock_youtube_metadata_response,
     mock_youtube_search_response,
     mock_youtube_streams_response,
     mock_youtube_transcript_response,
+    mock_youtube_video_response,
 )
 
 MOCK_API_KEY = "sk_live_test_key_12345"
@@ -53,30 +53,31 @@ class TestScavioYouTubeSearchTool:
         assert len(parsed["data"]["results"]) == 3
 
 
-class TestScavioYouTubeMetadataTool:
-    """Tests for ScavioYouTubeMetadataTool."""
+class TestScavioYouTubeVideoTool:
+    """Tests for ScavioYouTubeVideoTool."""
 
     @patch("crewai_scavio._base.ScavioClient")
     @patch("crewai_scavio._base.AsyncScavioClient")
     @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
     def test_initialization(self, mock_async, mock_client):
         """Test default initialization values."""
-        tool = ScavioYouTubeMetadataTool(api_key=MOCK_API_KEY)
-        assert tool.name == "Scavio YouTube Metadata"
+        tool = ScavioYouTubeVideoTool(api_key=MOCK_API_KEY)
+        assert tool.name == "Scavio YouTube Video"
 
     @patch("crewai_scavio._base.ScavioClient")
     @patch("crewai_scavio._base.AsyncScavioClient")
     @patch("crewai_scavio._base.SCAVIO_AVAILABLE", True)
-    def test_returns_metadata(self, mock_async, mock_client_cls):
-        """Test that metadata is returned."""
+    def test_returns_video(self, mock_async, mock_client_cls):
+        """Test that video metadata is returned."""
         mock_client = MagicMock()
-        mock_client.youtube.metadata.return_value = mock_youtube_metadata_response()
+        mock_client.youtube.video.return_value = mock_youtube_video_response()
         mock_client_cls.return_value = mock_client
 
-        tool = ScavioYouTubeMetadataTool(api_key=MOCK_API_KEY)
+        tool = ScavioYouTubeVideoTool(api_key=MOCK_API_KEY)
         result = tool._run(video_id="vid_1")
         parsed = json.loads(result)
         assert parsed["data"]["video_id"] == "vid_1"
+        mock_client.youtube.video.assert_called_once_with(video_id="vid_1")
 
 
 class TestScavioYouTubeCommentsTool:

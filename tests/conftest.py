@@ -71,7 +71,7 @@ def mock_youtube_search_response(num_results: int = 10) -> dict:
     }
 
 
-def mock_youtube_metadata_response() -> dict:
+def mock_youtube_video_response() -> dict:
     return {
         "credits_used": 1,
         "data": {
@@ -193,15 +193,17 @@ def mock_reddit_search_response(num_posts: int = 10) -> dict:
     return {
         "credits_used": 1,
         "data": {
-            "posts": [
+            "results": [
                 {
-                    "id": f"post_{i}",
+                    "post_id": f"t3_post_{i}",
                     "title": f"Post {i}",
                     "subreddit": "test",
                     "author": f"user_{i}",
                 }
                 for i in range(1, num_posts + 1)
             ],
+            "next_cursor": "cursor_2",
+            "has_more": True,
         },
     }
 
@@ -210,14 +212,13 @@ def mock_reddit_post_response() -> dict:
     return {
         "credits_used": 1,
         "data": {
-            "post": {
-                "id": "post_1",
-                "title": "Test Post",
-                "body": "Test body",
-            },
-            "comments": [
-                {"id": "c1", "body": "Comment 1"},
-            ],
+            "post_id": "t3_post_1",
+            "title": "Test Post",
+            "text": "Test body",
+            "subreddit": "test",
+            "author": "user_1",
+            "score": 42,
+            "num_comments": 7,
         },
     }
 

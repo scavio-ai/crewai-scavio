@@ -1,11 +1,9 @@
 """Scavio Reddit tools for CrewAI.
 
-Provides tools to search Reddit posts and comments and fetch individual
-post details via the Scavio API.
+Provides tools to search Reddit posts and fetch individual post details
+via the Scavio API.
 """
 
-
-from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -16,68 +14,55 @@ class ScavioRedditSearchToolSchema(BaseModel):
     """Input schema for ScavioRedditSearchTool."""
 
     query: str = Field(..., description="Reddit search query.")
+    cursor: str | None = Field(
+        default=None,
+        description="Pagination cursor -- pass next_cursor from a previous response.",
+    )
 
 
 class ScavioRedditSearchTool(ScavioBaseTool):
-    """Tool that searches Reddit posts and comments using the Scavio API.
+    """Tool that searches Reddit posts using the Scavio API.
 
     Attributes:
         name: The name of the tool.
         description: A description of the tool's purpose.
         args_schema: The schema for the tool's arguments.
-        type: Type of Reddit content to search for.
-        sort: Sort order for results.
     """
 
     name: str = "Scavio Reddit Search"
     description: str = (
-        "A tool that searches Reddit posts and comments using the Scavio API. "
-        "Returns post titles, URLs, subreddits, authors, and timestamps "
-        "as a JSON string."
+        "A tool that searches Reddit posts using the Scavio API. "
+        "Returns post titles, URLs, subreddits, authors, scores, and "
+        "timestamps as a JSON string, plus next_cursor for pagination."
     )
     args_schema: type[BaseModel] = ScavioRedditSearchToolSchema
 
-    type: Literal["posts", "comments"] | None = Field(
-        default=None,
-        description="Type of Reddit content to search for.",
-    )
-    sort: Literal["new", "relevance", "hot", "top", "comments"] | None = Field(
-        default=None,
-        description="Sort order for results.",
-    )
-
-    def _run(self, query: str) -> str:
-        """Synchronously search Reddit posts and comments.
+    def _run(self, query: str, cursor: str | None = None) -> str:
+        """Synchronously search Reddit posts.
 
         Args:
             query: Reddit search query.
+            cursor: Pagination cursor from a previous response.
 
         Returns:
             A JSON string containing Reddit search results.
         """
-        raw = self.client.reddit.search(
-            query=query,
-            type=self.type,
-            sort=self.sort,
-        )
-        self._truncate_nested(raw, "data", "posts")
+        raw = self.client.reddit.search(query=query, cursor=cursor)
+        self._truncate_nested(raw, "data", "results")
         return self._format_response(raw)
 
-    async def _arun(self, query: str) -> str:
-        """Asynchronously search Reddit posts and comments.
+    async def _arun(self, query: str, cursor: str | None = None) -> str:
+        """Asynchronously search Reddit posts.
 
         Args:
             query: Reddit search query.
+            cursor: Pagination cursor from a previous response.
 
         Returns:
             A JSON string containing Reddit search results.
         """
-        raw = await self.async_client.reddit.search(
-            query=query,
-            type=self.type,
-            sort=self.sort,
-        )
-        self._truncate_nested(raw, "data", "posts")
+        raw = await self.async_client.reddit.search(query=query, cursor=cursor)
+        self._truncate_nested(raw, "data", "results")
         return self._format_response(raw)
 
 
@@ -88,7 +73,7 @@ class ScavioRedditPostToolSchema(BaseModel):
 
 
 class ScavioRedditPostTool(ScavioBaseTool):
-    """Tool that fetches a Reddit post's metadata and comment thread by URL.
+    """Tool that fetches a Reddit post by URL.
 
     Attributes:
         name: The name of the tool.
@@ -98,8 +83,9 @@ class ScavioRedditPostTool(ScavioBaseTool):
 
     name: str = "Scavio Reddit Post"
     description: str = (
-        "A tool that fetches a Reddit post's metadata and comment thread "
-        "by URL using the Scavio API."
+        "A tool that fetches a single Reddit post by URL using the Scavio "
+        "API. Returns a flat post object -- title, text, score, "
+        "upvote_ratio, num_comments, and media. Comments are not included."
     )
     args_schema: type[BaseModel] = ScavioRedditPostToolSchema
 
@@ -110,7 +96,7 @@ class ScavioRedditPostTool(ScavioBaseTool):
             url: URL of the Reddit post.
 
         Returns:
-            A JSON string containing the post metadata and comments.
+            A JSON string containing the post object.
         """
         raw = self.client.reddit.post(url=url)
         return self._format_response(raw)
@@ -122,7 +108,7 @@ class ScavioRedditPostTool(ScavioBaseTool):
             url: URL of the Reddit post.
 
         Returns:
-            A JSON string containing the post metadata and comments.
+            A JSON string containing the post object.
         """
         raw = await self.async_client.reddit.post(url=url)
         return self._format_response(raw)
