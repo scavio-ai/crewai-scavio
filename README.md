@@ -1,6 +1,17 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 97 search tools -- one per Scavio endpoint -- across Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, Instagram, X (Twitter), and LinkedIn for use with CrewAI agents.
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 188 search tools -- one per Scavio endpoint -- for use with CrewAI agents:
+
+- **Search and web** -- Google (web, AI Mode, news, maps, shopping, flights, hotels, trends) and `ScavioExtractTool`, which reads any URL as HTML, Markdown or plain text
+- **Retail** -- Amazon, Walmart, eBay, Target, Home Depot, TikTok Shop
+- **Social and video** -- YouTube, TikTok, Instagram, Reddit, X (Twitter), Threads, Kuaishou
+- **Real estate** -- Zillow, Redfin
+- **Travel and local** -- Booking.com, Airbnb, Tripadvisor, Yelp
+- **Jobs and employers** -- LinkedIn, Indeed, Glassdoor
+- **Apps** -- Apple App Store, Google Play
+- **Company and filings** -- SEC EDGAR, Companies House (UK)
+- **Software reviews** -- G2, Capterra
+- **Ad transparency** -- Google Ads Transparency, Meta Ad Library
 
 ## Installation
 
@@ -84,8 +95,13 @@ print(result)
 | YouTube | `ScavioYouTubeChannelShortsTool` | Shorts posted by a channel |
 | YouTube | `ScavioYouTubeChannelCommunityTool` | A channel's community posts |
 | YouTube | `ScavioYouTubeChannelResolveTool` | Resolve an @handle or URL to a channel ID |
-| Walmart | `ScavioWalmartSearchTool` | Product search with price/fulfillment filters |
-| Walmart | `ScavioWalmartProductTool` | Product details by ID |
+| Walmart | `ScavioWalmartSearchTool` | Product search with price and fulfillment filters |
+| Walmart | `ScavioWalmartProductTool` | Product details by item id (US only, no domain) |
+| Walmart | `ScavioWalmartReviewsTool` | Customer reviews, 10 per page, with the rating breakdown |
+| Walmart | `ScavioWalmartCategoryTool` | Products in a category, same shape as search |
+| Walmart | `ScavioWalmartOffersTool` | The buy-box offer only -- not the full seller list |
+| Walmart | `ScavioWalmartSellerTool` | Marketplace seller storefront and Pro Seller badge |
+| Walmart | `ScavioWalmartSellerProductsTool` | A seller's catalog, first ~40 items, no pagination |
 | Reddit | `ScavioRedditSearchTool` | Post search with cursor pagination |
 | Reddit | `ScavioRedditSearchSuggestionsTool` | Search query autocomplete |
 | Reddit | `ScavioRedditPostTool` | Post details by url or post_id (no comments) |
@@ -149,6 +165,92 @@ print(result)
 | LinkedIn | `ScavioLinkedInJobTool` | Job details by id |
 | LinkedIn | `ScavioLinkedInPostTool` | Post details by id or URL |
 | LinkedIn | `ScavioLinkedInPostCommentsTool` | Post comments (paged by integer `page`) |
+| Threads | `ScavioThreadsProfileTool` | Profile by user_id (2 credits) or username (4) |
+| Threads | `ScavioThreadsUserPostsTool` | A user's posts, cursor-paginated |
+| Threads | `ScavioThreadsUserRepliesTool` | A user's replies, cursor-paginated |
+| Threads | `ScavioThreadsPostTool` | A single post by post_id or threads.net URL |
+| Threads | `ScavioThreadsPostCommentsTool` | Replies to a post, cursor-paginated |
+| Threads | `ScavioThreadsSearchUsersTool` | Profile search -- the only search Threads exposes |
+| Kuaishou | `ScavioKuaishouProfileTool` | User profile (10 credits) |
+| Kuaishou | `ScavioKuaishouUserPostsTool` | A user's top posts, cursor-paginated |
+| Kuaishou | `ScavioKuaishouUserLiveTool` | A user's current live-stream status |
+| Kuaishou | `ScavioKuaishouUserResolveTool` | Share link to user id (kuaishou.com only) |
+| Kuaishou | `ScavioKuaishouVideoTool` | One video by photo id or URL |
+| Kuaishou | `ScavioKuaishouVideoCommentsTool` | Comments on a video, cursor-paginated |
+| Kuaishou | `ScavioKuaishouCommentRepliesTool` | Replies under a root comment |
+| Kuaishou | `ScavioKuaishouVideosBatchTool` | Up to 20 videos in one call (40 credits) |
+| Kuaishou | `ScavioKuaishouSearchTool` | Mixed-result search (10 credits per page) |
+| Kuaishou | `ScavioKuaishouSearchVideosTool` | Video search (10 credits per page) |
+| Kuaishou | `ScavioKuaishouSearchUsersTool` | User search (10 credits per page) |
+| Kuaishou | `ScavioKuaishouSearchLiveTool` | Live-stream search (10 credits per page) |
+| Kuaishou | `ScavioKuaishouTagFeedTool` | Posts under a hashtag, cursor-paginated |
+| Kuaishou | `ScavioKuaishouTrendingTool` | Hot / live / shopping / brand / music leaderboards |
+| eBay | `ScavioEbaySearchTool` | Live or SOLD listings; `seller` works with no keyword |
+| eBay | `ScavioEbayProductTool` | One listing in full, by item number or URL |
+| eBay | `ScavioEbaySellerTool` | Seller profile card (profile only, not a catalog) |
+| Target | `ScavioTargetSearchTool` | Target.com search with prices, ratings and promotions |
+| Target | `ScavioTargetCategoryTool` | Products in a category, plus the breadcrumb |
+| Target | `ScavioTargetProductTool` | Product details by TCIN |
+| Target | `ScavioTargetReviewsTool` | Reviews with per-attribute averages and guest photos |
+| Home Depot | `ScavioHomeDepotSearchTool` | Search with per-store pricing and availability |
+| Home Depot | `ScavioHomeDepotProductTool` | Full item detail, spec table and documents |
+| Home Depot | `ScavioHomeDepotReviewsTool` | Review bodies and the rating distribution |
+| Zillow | `ScavioZillowSearchTool` | Listings in a region with Zestimate and coordinates |
+| Zillow | `ScavioZillowPropertyTool` | Full listing: price and tax history, RESO facts, schools |
+| Zillow | `ScavioZillowAgentReviewsTool` | A Zillow agent's profile and reviews |
+| Booking.com | `ScavioBookingSearchTool` | Properties for a destination and stay, with live prices |
+| Booking.com | `ScavioBookingHotelTool` | One property: rooms, rate plans, facilities, house rules |
+| Booking.com | `ScavioBookingReviewsTool` | Guest reviews with the score breakdown by category |
+| Tripadvisor | `ScavioTripadvisorLocationsTool` | Start here: resolve a name to geo_id / location_id |
+| Tripadvisor | `ScavioTripadvisorSearchTool` | Restaurants, hotels or attractions in a geo |
+| Tripadvisor | `ScavioTripadvisorLocationTool` | One location in full, with page 1 of reviews |
+| Tripadvisor | `ScavioTripadvisorReviewsTool` | Reviews past page 1 (de-duplicate on review_id) |
+| Indeed | `ScavioIndeedSearchTool` | Job postings with salary range, type and benefits |
+| Indeed | `ScavioIndeedJobTool` | One posting in full, description text and HTML |
+| Indeed | `ScavioIndeedCompanyTool` | Employer profile with ratings and open roles |
+| Indeed | `ScavioIndeedCompanyReviewsTool` | Employee reviews, 20 per page, with per-category ratings |
+| Airbnb | `ScavioAirbnbSearchTool` | Stays with stay-total price and the discount ledger |
+| Airbnb | `ScavioAirbnbListingTool` | One listing: capacity, amenities, house rules, photos |
+| Airbnb | `ScavioAirbnbReviewsTool` | Review bodies with per-review rating and reviewer |
+| Glassdoor | `ScavioGlassdoorCompaniesTool` | Start here: resolve a company name to employer_id |
+| Glassdoor | `ScavioGlassdoorCompanyTool` | Employer profile, size, revenue and ratings |
+| Glassdoor | `ScavioGlassdoorReviewsTool` | Up to three full reviews -- Glassdoor's login wall caps it |
+| Glassdoor | `ScavioGlassdoorSalariesTool` | Salaries by job title, 10 titles per page |
+| Yelp | `ScavioYelpSearchTool` | Businesses in Yelp's ranked order |
+| Yelp | `ScavioYelpBusinessTool` | One business: hours, attributes, photos, highlights |
+| Yelp | `ScavioYelpReviewsTool` | Review bodies with author profile and expertise counts |
+| App Store | `ScavioAppStoreSearchTool` | Up to 200 fully-shaped app rows |
+| App Store | `ScavioAppStoreAppTool` | Full listing: pricing, ratings, screenshots, devices |
+| App Store | `ScavioAppStoreReviewsTool` | Reviews with the app version each was written against |
+| Google Play | `ScavioGooglePlaySearchTool` | Ranked apps with package name, rating and installs |
+| Google Play | `ScavioGooglePlayAppTool` | Full store listing, including the real install count |
+| Google Play | `ScavioGooglePlayReviewsTool` | Reviews with thumbs-up count and developer replies |
+| SEC EDGAR | `ScavioSECLookupTool` | Start here: resolve a name or ticker to a CIK |
+| SEC EDGAR | `ScavioSECCompanyTool` | Filer profile: SIC industry, EIN, LEI, former names |
+| SEC EDGAR | `ScavioSECFilingsTool` | A page of filings with direct document links |
+| SEC EDGAR | `ScavioSECConceptTool` | Every value reported for one XBRL concept |
+| SEC EDGAR | `ScavioSECFactsTool` | The index of every XBRL concept a filer reports |
+| SEC EDGAR | `ScavioSECSearchTool` | EDGAR full-text search, coverage from 2001 |
+| Redfin | `ScavioRedfinSearchTool` | Listings with price per sqft, lot size and year built |
+| Redfin | `ScavioRedfinPropertyTool` | One listing: Redfin Estimate, MLS facts, comparables |
+| Redfin | `ScavioRedfinMarketTool` | Housing-market stats for a region |
+| Companies House | `ScavioCompaniesHouseSearchTool` | Start here: name to company_number on the UK register |
+| Companies House | `ScavioCompaniesHouseCompanyTool` | Full register entry: status, SIC codes, addresses |
+| Companies House | `ScavioCompaniesHouseOfficersTool` | Officers, current and resigned, 35 per page |
+| Companies House | `ScavioCompaniesHouseFilingHistoryTool` | Filings, most recent first, with type codes |
+| G2 | `ScavioG2SearchTool` | B2B software search with rating and review count |
+| G2 | `ScavioG2ProductTool` | Full product profile: pros, cons, features, alternatives |
+| G2 | `ScavioG2ReviewsTool` | Reviews with likes, dislikes and reviewer job title |
+| Capterra | `ScavioCapterraSearchTool` | 20 ranked products with vendor and pricing |
+| Capterra | `ScavioCapterraProductTool` | Full profile with the four scored criteria |
+| Capterra | `ScavioCapterraReviewsTool` | Reviews with five per-criterion scores |
+| Google Ads | `ScavioGoogleAdsAdvertisersTool` | Resolve a brand or domain to an advertiser_id |
+| Google Ads | `ScavioGoogleAdsSearchTool` | Every ad Ads Transparency holds for an advertiser |
+| Google Ads | `ScavioGoogleAdsCreativeTool` | One creative in full, with its size variations |
+| Meta Ads | `ScavioMetaAdsSearchTool` | Ad Library keyword search, 30 ads per page |
+| Meta Ads | `ScavioMetaAdsAdvertiserTool` | Every ad a Facebook Page is running |
+| Meta Ads | `ScavioMetaAdsAdTool` | One ad by archive id, with run dates and platforms |
+| Any URL | `ScavioExtractTool` | Read any URL as HTML, Markdown or plain text |
 
 ## Usage Examples
 
@@ -247,22 +349,37 @@ followers = followers_tool.run(
 
 ### Walmart Product Search
 
-`start_page` is the only pagination field -- Walmart has no `page`. Price,
-fulfillment and store filters are agent-visible arguments.
+> **Walmart changed in 0.8.0 (breaking).** Walmart moved to a new upstream and
+> gained five endpoints. `device`, `delivery_zip` and `store_id` are retired:
+> sending them now returns a 200 with a `warnings[]` array explaining why, so
+> they are removed here rather than kept as silent no-ops. `start_page` still
+> works as a deprecated alias, but `page` is the field to use. `ScavioWalmartProductTool`
+> takes no `domain` -- walmart.ca product pages cannot be fetched at all.
+
+`domain` is the price-bearing parameter: `com` and `ca` cost 1 credit,
+`com.mx` costs 2. Search and category accept it; the other five do not.
 
 ```python
-from crewai_scavio import ScavioWalmartSearchTool
+from crewai_scavio import ScavioWalmartSearchTool, ScavioWalmartOffersTool
 
 walmart_tool = ScavioWalmartSearchTool(max_results=10)
 result = walmart_tool.run(
     query="air fryer",
-    start_page=2,
+    page=2,
     sort_by="price_low",
     min_price=50,
     max_price=200,
-    delivery_zip="10001",
+    fulfillment_speed="tomorrow",
 )
+
+# Offers returns the BUY-BOX seller only -- there is no way to page
+# through the other sellers.
+offers = ScavioWalmartOffersTool().run(product_id="13544111159")
 ```
+
+`ScavioWalmartSellerProductsTool` wants the NUMERIC catalog seller id, the
+`seller_catalog_id` field on a product, search or offers row. The GUID
+`seller_id` 404s.
 
 ### Reddit Search
 
@@ -355,6 +472,81 @@ reviews = json.loads(
 )
 ```
 
+### Reading Any URL
+
+`ScavioExtractTool` is not tied to a platform: give it a URL and it returns the
+page as raw HTML, readability Markdown, or that Markdown flattened to plain
+text. `mode` is the price-bearing argument -- `normal` (plain fetch) and
+`advanced` (full browser render) cost 1 credit, `ultra` costs 2 -- and only a
+successful extraction is billed, so a dead link, bot wall or timeout costs
+nothing.
+
+```python
+from crewai_scavio import ScavioExtractTool
+
+extract_tool = ScavioExtractTool()
+page = extract_tool.run(url="https://example.com/pricing", format="markdown")
+
+# Hardest targets only: 2 credits, so do not reach for it first.
+stubborn = extract_tool.run(url="https://example.com/gated", mode="ultra")
+```
+
+### eBay Sold-Listing Price Research
+
+`sold=True` searches completed listings that actually sold, which is what makes
+eBay a price-history source rather than another catalog. eBay publishes no
+headline count on that view, so `total_results` comes back null -- page until a
+page comes back short instead of trusting a total.
+
+`ScavioEbaySellerTool` is a profile card and cannot enumerate a catalog. To
+page a seller's inventory, use search with `seller` set and no keyword.
+
+```python
+from crewai_scavio import ScavioEbaySearchTool
+
+ebay_tool = ScavioEbaySearchTool(max_results=20)
+sold = ebay_tool.run(query="ps5 slim", sold=True, condition="used", per_page=120)
+
+catalogue = ebay_tool.run(seller="musicmagpie", sort_by="newly_listed")
+```
+
+`per_page` accepts only 60, 120 or 240; eBay silently falls back to 60 for
+anything else.
+
+### Lookup-First Platforms
+
+Five surfaces are keyed by an id you have to resolve first. Spend the lookup
+call rather than guessing the id:
+
+| Platform | Resolve with | Then call |
+|----------|--------------|-----------|
+| Tripadvisor | `ScavioTripadvisorLocationsTool` | search / location / reviews |
+| Glassdoor | `ScavioGlassdoorCompaniesTool` | company / reviews / salaries |
+| SEC EDGAR | `ScavioSECLookupTool` | company / filings / concept / facts |
+| Companies House | `ScavioCompaniesHouseSearchTool` | company / officers / filing-history |
+| Google Ads | `ScavioGoogleAdsAdvertisersTool` | search / creative |
+
+```python
+import json
+
+from crewai_scavio import ScavioSECFilingsTool, ScavioSECLookupTool
+
+cik = json.loads(ScavioSECLookupTool().run(query="Apple"))["data"]["results"][0]
+filings = ScavioSECFilingsTool(max_results=10).run(cik=cik["cik"], form="10-K")
+```
+
+### Body-Priced Endpoints
+
+Four surfaces cost a number that depends on the request body, not on the route.
+Budget for the expensive branch:
+
+| Surface | What moves the price |
+|---------|----------------------|
+| Walmart | `domain`: `com` / `ca` cost 1 credit, `com.mx` costs 2 |
+| Threads | `user_id` costs 2 credits, `username` costs 4 -- pass `user_id` when you have it |
+| Kuaishou | Priced per endpoint: 1, 2, 10 or 40 credits (`videos_batch` is the 40) |
+| Extract | `mode`: `normal` and `advanced` cost 1 credit, `ultra` costs 2 |
+
 ## Configuration
 
 All tools accept `api_key` as a parameter, or read from the `SCAVIO_API_KEY` environment variable:
@@ -372,6 +564,14 @@ tool = ScavioSearchTool(api_key="sk_live_...", max_results=10)
 - [Amazon Product API](https://scavio.dev/amazon-product-api) and [Walmart Product API](https://scavio.dev/walmart-product-api) — product search and details
 - [YouTube API](https://scavio.dev/youtube-transcript-api), [TikTok API](https://scavio.dev/tiktok-api), and [Instagram API](https://scavio.dev/instagram-api) — video and social media data
 - [Reddit API](https://scavio.dev/reddit-api) — posts, threaded comments, subreddit and user feeds
-- X (Twitter) and LinkedIn — tweets, profiles, timelines, company pages, and jobs
+- X (Twitter), LinkedIn, Threads, and Kuaishou — tweets, profiles, timelines, company pages, and jobs
+- eBay, Target, and Home Depot — retail search, product detail, and reviews
+- Zillow and Redfin — listings, property detail, and market stats
+- Booking.com, Airbnb, Tripadvisor, and Yelp — travel and local business data
+- Indeed and Glassdoor — job postings, employer profiles, reviews, and salaries
+- Apple App Store and Google Play — app listings and reviews
+- SEC EDGAR and Companies House — filings, XBRL facts, officers, and UK register entries
+- G2 and Capterra — B2B software ratings and review bodies
+- Google Ads Transparency and the Meta Ad Library — competitor ad creatives
 
 Get a free [API key](https://dashboard.scavio.dev) and explore the [documentation](https://scavio.dev/docs/introduction). You can also [compare Scavio vs alternatives](https://scavio.dev/compare) on coverage and pricing.

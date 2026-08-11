@@ -10,11 +10,15 @@ from __future__ import annotations
 import importlib
 import inspect
 import pkgutil
+import re
+from pathlib import Path
 
 from scavio._spec import ENDPOINTS
 
 import crewai_scavio
 from crewai_scavio._base import ScavioBaseTool
+
+README = Path(__file__).resolve().parent.parent / "README.md"
 
 # Endpoints no integration package wraps: retired paths, deprecated aliases and
 # unbilled GET helpers. Mirrors EXCLUDED in integrations/coverage-check.py.
@@ -101,6 +105,24 @@ def test_excluded_endpoints_are_all_real_spec_paths_or_gone():
     paths = {endpoint.path for endpoint in ENDPOINTS.values()}
     for excluded in EXCLUDED_ENDPOINTS:
         assert excluded in paths or excluded in known_gone, excluded
+
+
+def test_readme_documents_every_tool():
+    """A tool absent from the README is a tool nobody discovers.
+
+    The tool table is the only place a user browses the surface, and it has
+    gone stale before: the Walmart rows still advertised two endpoints and
+    three retired parameters months after the rebuild landed.
+    """
+    documented = set(re.findall(r"`(Scavio\w+Tool)`", README.read_text()))
+    exported = set(crewai_scavio.__all__)
+    assert exported - documented == set()
+    assert documented - exported == set()
+
+
+def test_readme_states_the_real_tool_count():
+    """The headline count is a claim, so it has to be a true one."""
+    assert f"{len(crewai_scavio.__all__)} search tools" in README.read_text()
 
 
 def test_tool_names_are_unique():

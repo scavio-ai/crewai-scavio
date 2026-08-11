@@ -2,10 +2,53 @@
 
 from __future__ import annotations
 
+from crewai_scavio.airbnb import (
+    ScavioAirbnbListingTool,
+    ScavioAirbnbReviewsTool,
+    ScavioAirbnbSearchTool,
+)
 from crewai_scavio.amazon import (
     ScavioAmazonOffersTool,
     ScavioAmazonProductTool,
     ScavioAmazonSearchTool,
+)
+from crewai_scavio.app_store import (
+    ScavioAppStoreAppTool,
+    ScavioAppStoreReviewsTool,
+    ScavioAppStoreSearchTool,
+)
+from crewai_scavio.booking import (
+    ScavioBookingHotelTool,
+    ScavioBookingReviewsTool,
+    ScavioBookingSearchTool,
+)
+from crewai_scavio.capterra import (
+    ScavioCapterraProductTool,
+    ScavioCapterraReviewsTool,
+    ScavioCapterraSearchTool,
+)
+from crewai_scavio.companies_house import (
+    ScavioCompaniesHouseCompanyTool,
+    ScavioCompaniesHouseFilingHistoryTool,
+    ScavioCompaniesHouseOfficersTool,
+    ScavioCompaniesHouseSearchTool,
+)
+from crewai_scavio.ebay import (
+    ScavioEbayProductTool,
+    ScavioEbaySearchTool,
+    ScavioEbaySellerTool,
+)
+from crewai_scavio.extract import ScavioExtractTool
+from crewai_scavio.g2 import (
+    ScavioG2ProductTool,
+    ScavioG2ReviewsTool,
+    ScavioG2SearchTool,
+)
+from crewai_scavio.glassdoor import (
+    ScavioGlassdoorCompaniesTool,
+    ScavioGlassdoorCompanyTool,
+    ScavioGlassdoorReviewsTool,
+    ScavioGlassdoorSalariesTool,
 )
 from crewai_scavio.google import (
     ScavioGoogleAiModeTool,
@@ -23,6 +66,27 @@ from crewai_scavio.google import (
     ScavioGoogleTrendsTool,
     ScavioSearchTool,
 )
+from crewai_scavio.google_ads import (
+    ScavioGoogleAdsAdvertisersTool,
+    ScavioGoogleAdsCreativeTool,
+    ScavioGoogleAdsSearchTool,
+)
+from crewai_scavio.google_play import (
+    ScavioGooglePlayAppTool,
+    ScavioGooglePlayReviewsTool,
+    ScavioGooglePlaySearchTool,
+)
+from crewai_scavio.home_depot import (
+    ScavioHomeDepotProductTool,
+    ScavioHomeDepotReviewsTool,
+    ScavioHomeDepotSearchTool,
+)
+from crewai_scavio.indeed import (
+    ScavioIndeedCompanyReviewsTool,
+    ScavioIndeedCompanyTool,
+    ScavioIndeedJobTool,
+    ScavioIndeedSearchTool,
+)
 from crewai_scavio.instagram import (
     ScavioInstagramCommentRepliesTool,
     ScavioInstagramPostCommentsTool,
@@ -37,6 +101,22 @@ from crewai_scavio.instagram import (
     ScavioInstagramUserPostsTool,
     ScavioInstagramUserReelsTool,
 )
+from crewai_scavio.kuaishou import (
+    ScavioKuaishouCommentRepliesTool,
+    ScavioKuaishouProfileTool,
+    ScavioKuaishouSearchLiveTool,
+    ScavioKuaishouSearchTool,
+    ScavioKuaishouSearchUsersTool,
+    ScavioKuaishouSearchVideosTool,
+    ScavioKuaishouTagFeedTool,
+    ScavioKuaishouTrendingTool,
+    ScavioKuaishouUserLiveTool,
+    ScavioKuaishouUserPostsTool,
+    ScavioKuaishouUserResolveTool,
+    ScavioKuaishouVideoCommentsTool,
+    ScavioKuaishouVideosBatchTool,
+    ScavioKuaishouVideoTool,
+)
 from crewai_scavio.linkedin import (
     ScavioLinkedInCompanyPostsTool,
     ScavioLinkedInCompanyTool,
@@ -47,6 +127,11 @@ from crewai_scavio.linkedin import (
     ScavioLinkedInPostCommentsTool,
     ScavioLinkedInPostTool,
     ScavioLinkedInSearchJobsTool,
+)
+from crewai_scavio.meta_ads import (
+    ScavioMetaAdsAdTool,
+    ScavioMetaAdsAdvertiserTool,
+    ScavioMetaAdsSearchTool,
 )
 from crewai_scavio.reddit import (
     ScavioRedditCommentRepliesTool,
@@ -61,6 +146,33 @@ from crewai_scavio.reddit import (
     ScavioRedditUserCommentsTool,
     ScavioRedditUserPostsTool,
     ScavioRedditUserTool,
+)
+from crewai_scavio.redfin import (
+    ScavioRedfinMarketTool,
+    ScavioRedfinPropertyTool,
+    ScavioRedfinSearchTool,
+)
+from crewai_scavio.sec import (
+    ScavioSECCompanyTool,
+    ScavioSECConceptTool,
+    ScavioSECFactsTool,
+    ScavioSECFilingsTool,
+    ScavioSECLookupTool,
+    ScavioSECSearchTool,
+)
+from crewai_scavio.target import (
+    ScavioTargetCategoryTool,
+    ScavioTargetProductTool,
+    ScavioTargetReviewsTool,
+    ScavioTargetSearchTool,
+)
+from crewai_scavio.threads import (
+    ScavioThreadsPostCommentsTool,
+    ScavioThreadsPostTool,
+    ScavioThreadsProfileTool,
+    ScavioThreadsSearchUsersTool,
+    ScavioThreadsUserPostsTool,
+    ScavioThreadsUserRepliesTool,
 )
 from crewai_scavio.tiktok import (
     ScavioTikTokCommentRepliesTool,
@@ -85,7 +197,21 @@ from crewai_scavio.tiktok_shop import (
     ScavioTikTokShopSearchTool,
     ScavioTikTokShopShopProductsTool,
 )
-from crewai_scavio.walmart import ScavioWalmartProductTool, ScavioWalmartSearchTool
+from crewai_scavio.tripadvisor import (
+    ScavioTripadvisorLocationsTool,
+    ScavioTripadvisorLocationTool,
+    ScavioTripadvisorReviewsTool,
+    ScavioTripadvisorSearchTool,
+)
+from crewai_scavio.walmart import (
+    ScavioWalmartCategoryTool,
+    ScavioWalmartOffersTool,
+    ScavioWalmartProductTool,
+    ScavioWalmartReviewsTool,
+    ScavioWalmartSearchTool,
+    ScavioWalmartSellerProductsTool,
+    ScavioWalmartSellerTool,
+)
 from crewai_scavio.x import (
     ScavioXSearchTool,
     ScavioXTrendingTool,
@@ -98,6 +224,11 @@ from crewai_scavio.x import (
     ScavioXUserRepliesTool,
     ScavioXUserTool,
     ScavioXUserTweetsTool,
+)
+from crewai_scavio.yelp import (
+    ScavioYelpBusinessTool,
+    ScavioYelpReviewsTool,
+    ScavioYelpSearchTool,
 )
 from crewai_scavio.youtube import (
     ScavioYouTubeChannelCommunityTool,
@@ -116,8 +247,13 @@ from crewai_scavio.youtube import (
     ScavioYouTubeTranscriptTool,
     ScavioYouTubeVideoTool,
 )
+from crewai_scavio.zillow import (
+    ScavioZillowAgentReviewsTool,
+    ScavioZillowPropertyTool,
+    ScavioZillowSearchTool,
+)
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 __all__ = [
     "ScavioSearchTool",
@@ -154,6 +290,11 @@ __all__ = [
     "ScavioYouTubeChannelResolveTool",
     "ScavioWalmartSearchTool",
     "ScavioWalmartProductTool",
+    "ScavioWalmartReviewsTool",
+    "ScavioWalmartCategoryTool",
+    "ScavioWalmartOffersTool",
+    "ScavioWalmartSellerTool",
+    "ScavioWalmartSellerProductsTool",
     "ScavioRedditSearchTool",
     "ScavioRedditSearchSuggestionsTool",
     "ScavioRedditPostTool",
@@ -217,4 +358,90 @@ __all__ = [
     "ScavioXUserRepliesTool",
     "ScavioXUserTool",
     "ScavioXUserTweetsTool",
+    "ScavioThreadsProfileTool",
+    "ScavioThreadsUserPostsTool",
+    "ScavioThreadsUserRepliesTool",
+    "ScavioThreadsPostTool",
+    "ScavioThreadsPostCommentsTool",
+    "ScavioThreadsSearchUsersTool",
+    "ScavioKuaishouProfileTool",
+    "ScavioKuaishouUserPostsTool",
+    "ScavioKuaishouUserLiveTool",
+    "ScavioKuaishouUserResolveTool",
+    "ScavioKuaishouVideoTool",
+    "ScavioKuaishouVideoCommentsTool",
+    "ScavioKuaishouCommentRepliesTool",
+    "ScavioKuaishouVideosBatchTool",
+    "ScavioKuaishouSearchTool",
+    "ScavioKuaishouSearchVideosTool",
+    "ScavioKuaishouSearchUsersTool",
+    "ScavioKuaishouSearchLiveTool",
+    "ScavioKuaishouTagFeedTool",
+    "ScavioKuaishouTrendingTool",
+    "ScavioEbaySearchTool",
+    "ScavioEbayProductTool",
+    "ScavioEbaySellerTool",
+    "ScavioTargetSearchTool",
+    "ScavioTargetCategoryTool",
+    "ScavioTargetProductTool",
+    "ScavioTargetReviewsTool",
+    "ScavioHomeDepotSearchTool",
+    "ScavioHomeDepotProductTool",
+    "ScavioHomeDepotReviewsTool",
+    "ScavioZillowSearchTool",
+    "ScavioZillowPropertyTool",
+    "ScavioZillowAgentReviewsTool",
+    "ScavioBookingSearchTool",
+    "ScavioBookingHotelTool",
+    "ScavioBookingReviewsTool",
+    "ScavioTripadvisorLocationsTool",
+    "ScavioTripadvisorSearchTool",
+    "ScavioTripadvisorLocationTool",
+    "ScavioTripadvisorReviewsTool",
+    "ScavioIndeedSearchTool",
+    "ScavioIndeedJobTool",
+    "ScavioIndeedCompanyTool",
+    "ScavioIndeedCompanyReviewsTool",
+    "ScavioAirbnbSearchTool",
+    "ScavioAirbnbListingTool",
+    "ScavioAirbnbReviewsTool",
+    "ScavioGlassdoorCompaniesTool",
+    "ScavioGlassdoorCompanyTool",
+    "ScavioGlassdoorReviewsTool",
+    "ScavioGlassdoorSalariesTool",
+    "ScavioYelpSearchTool",
+    "ScavioYelpBusinessTool",
+    "ScavioYelpReviewsTool",
+    "ScavioAppStoreSearchTool",
+    "ScavioAppStoreAppTool",
+    "ScavioAppStoreReviewsTool",
+    "ScavioGooglePlaySearchTool",
+    "ScavioGooglePlayAppTool",
+    "ScavioGooglePlayReviewsTool",
+    "ScavioSECLookupTool",
+    "ScavioSECCompanyTool",
+    "ScavioSECFilingsTool",
+    "ScavioSECConceptTool",
+    "ScavioSECFactsTool",
+    "ScavioSECSearchTool",
+    "ScavioRedfinSearchTool",
+    "ScavioRedfinPropertyTool",
+    "ScavioRedfinMarketTool",
+    "ScavioCompaniesHouseSearchTool",
+    "ScavioCompaniesHouseCompanyTool",
+    "ScavioCompaniesHouseOfficersTool",
+    "ScavioCompaniesHouseFilingHistoryTool",
+    "ScavioG2SearchTool",
+    "ScavioG2ProductTool",
+    "ScavioG2ReviewsTool",
+    "ScavioCapterraSearchTool",
+    "ScavioCapterraProductTool",
+    "ScavioCapterraReviewsTool",
+    "ScavioGoogleAdsAdvertisersTool",
+    "ScavioGoogleAdsSearchTool",
+    "ScavioGoogleAdsCreativeTool",
+    "ScavioMetaAdsSearchTool",
+    "ScavioMetaAdsAdvertiserTool",
+    "ScavioMetaAdsAdTool",
+    "ScavioExtractTool",
 ]

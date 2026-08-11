@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "crewai-scavio"
-version = "0.7.0"
-description = "CrewAI integration for Scavio Search API -- real-time Google, Amazon, Walmart, YouTube, Reddit, TikTok, TikTok Shop, Instagram, X, and LinkedIn search tools for AI agents"
+version = "0.8.0"
+description = "CrewAI integration for Scavio Search API -- 188 real-time search tools for AI agents across Google, Amazon, Walmart, eBay, Target, Home Depot, YouTube, Reddit, TikTok, Instagram, X, LinkedIn, Threads, Kuaishou, Zillow, Redfin, Booking.com, Airbnb, Tripadvisor, Yelp, Indeed, Glassdoor, the App Store, Google Play, SEC EDGAR, Companies House, G2, Capterra, Google Ads and the Meta Ad Library"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.10,<3.14"
@@ -25,6 +25,17 @@ keywords = [
     "instagram-search",
     "x-search",
     "linkedin-search",
+    "ebay-search",
+    "zillow-api",
+    "yelp-api",
+    "indeed-api",
+    "glassdoor-api",
+    "app-store-scraper",
+    "google-play-scraper",
+    "sec-edgar",
+    "g2-reviews",
+    "meta-ad-library",
+    "web-scraping",
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -36,7 +47,7 @@ classifiers = [
 
 dependencies = [
     "crewai>=1.14.0",
-    "scavio>=0.12.0",
+    "scavio>=0.15.0",
 ]
 
 [project.optional-dependencies]
