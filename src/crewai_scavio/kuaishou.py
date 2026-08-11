@@ -5,8 +5,8 @@ videos/batch=40, all four search endpoints=10, everything else=1. Every SDK
 docstring, MCP description, n8n hint and docs page must carry ITS OWN cost -- a
 single 'Costs N credits' line for the platform is wrong by up to 40x.
 
-- NAME IT KUAISHOU (CHINA), NEVER KWAI. TikHub does not serve Kwai
-  international (kwai.com) -- a real kwai.com photo id returns an empty
+- NAME IT KUAISHOU (CHINA), NEVER KWAI. Our upstream source does not serve
+  Kwai international (kwai.com) -- a real kwai.com photo id returns an empty
   envelope. Any surface calling this 'Kwai' attracts users it cannot serve.
 - Pricing is per-endpoint. Every SDK/doc must carry the per-endpoint cost, not
   a constant. profile=10, video=2, videos/batch=40, all four search

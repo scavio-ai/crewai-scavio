@@ -4,10 +4,12 @@ BODY-PRICED. threadsCreditCost(hasUsername): 2 credits when addressed by
 user_id, 4 credits when addressed by username. Only /profile, /user/posts and
 /user/replies are username-keyed; /post, /post/comments and /search/users are
 always 2. Every surface must present user_id as the cheap path and say why
-(TikHub's username lookup is dead, so a handle buys a second upstream call).
+(the upstream username lookup is unavailable, so a handle buys a second
+upstream call).
 
-- HANDLE SURCHARGE: TikHub's username lookup (fetch_user_info) is dead, so a
-  handle costs a second upstream call. 4 credits by username, 2 by user_id.
+- HANDLE SURCHARGE: the upstream username lookup (fetch_user_info) is
+  unavailable, so a handle costs a second upstream call. 4 credits by
+  username, 2 by user_id.
   Every doc/SDK must present user_id as the cheap path.
 - THERE IS NO THREADS CONTENT SEARCH -- search_top and search_recent both 400 on
   every attempt. Only people search (/search/users) exists. Do not let any

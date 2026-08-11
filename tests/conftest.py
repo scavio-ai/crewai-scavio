@@ -330,8 +330,8 @@ def mock_tiktok_followers_response(
 
 # -- TikTok Shop ------------------------------------------------------------
 #
-# These are the NORMALIZED shapes the backend emits, taken from running
-# backend/src/lib/tikhub/tiktok-shop-normalize.ts over the recorded fixtures in
+# These are the NORMALIZED shapes the backend emits, taken from running the
+# backend's TikTok Shop normalizer over the recorded fixtures in
 # backend/tests/fixtures/tiktok-shop/. The key names here are the key names the
 # tools must read.
 

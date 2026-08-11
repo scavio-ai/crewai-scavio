@@ -1,7 +1,8 @@
 """Scavio Reddit tools for CrewAI.
 
 All twelve Reddit endpoints cost 1 credit each (they were 2 before Reddit moved
-to TikHub). A few shapes are worth knowing before wiring these together:
+to its current upstream source). A few shapes are worth knowing before wiring
+these together:
 
 * ``/reddit/search`` accepts ONLY ``query`` and ``cursor``, and returns its hits
   under ``data.results`` with ``next_cursor`` / ``has_more``.
