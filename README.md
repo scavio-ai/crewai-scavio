@@ -1,8 +1,8 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 188 search tools -- one per Scavio endpoint -- for use with CrewAI agents:
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 193 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
 
-- **Search and web** -- Google (web, AI Mode, news, maps, shopping, flights, hotels, trends) and `ScavioExtractTool`, which reads any URL as HTML, Markdown or plain text
+- **Search and web** -- Google (web, AI Mode, news, maps, shopping, flights, hotels, trends) and `ScavioExtractTool`, which reads any URL as HTML, Markdown or plain text, plus `ScavioExtractMapTool`, `ScavioExtractCrawlTool` and `ScavioExtractBatchTool` to map a site's URLs, crawl a whole site, or extract a list of pages in one job
 - **Retail** -- Amazon, Walmart, eBay, Target, Home Depot, TikTok Shop
 - **Social and video** -- YouTube, TikTok, Instagram, Reddit, X (Twitter), Threads, Kuaishou
 - **Real estate** -- Zillow, Redfin
@@ -251,6 +251,11 @@ print(result)
 | Meta Ads | `ScavioMetaAdsAdvertiserTool` | Every ad a Facebook Page is running |
 | Meta Ads | `ScavioMetaAdsAdTool` | One ad by archive id, with run dates and platforms |
 | Any URL | `ScavioExtractTool` | Read any URL as HTML, Markdown or plain text |
+| Any site | `ScavioExtractMapTool` | A site's page URLs from its sitemaps and start page |
+| Any site | `ScavioExtractCrawlTool` | Crawl a site from one URL; every page as Markdown, text or HTML |
+| Any site | `ScavioExtractCrawlStatusTool` | A crawl's progress and page results, cursor-paged (free) |
+| Any URLs | `ScavioExtractBatchTool` | Extract a list of URLs in one job |
+| Any URLs | `ScavioExtractBatchStatusTool` | A batch's progress and page results, cursor-paged (free) |
 
 ## Usage Examples
 
@@ -476,8 +481,9 @@ reviews = json.loads(
 
 `ScavioExtractTool` is not tied to a platform: give it a URL and it returns the
 page as raw HTML, readability Markdown, or that Markdown flattened to plain
-text. `mode` is the price-bearing argument -- `normal` (plain fetch) and
-`advanced` (full browser render) cost 1 credit, `ultra` costs 2 -- and only a
+text. `mode` is the price-bearing argument -- `normal` (the standard fetch)
+and `advanced` (renders JavaScript-built pages) cost 1 credit, `ultra` (the
+hardest pages) costs 2 -- and only a
 successful extraction is billed, so a dead link, bot wall or timeout costs
 nothing.
 
@@ -490,6 +496,56 @@ page = extract_tool.run(url="https://example.com/pricing", format="markdown")
 # Hardest targets only: 2 credits, so do not reach for it first.
 stubborn = extract_tool.run(url="https://example.com/gated", mode="ultra")
 ```
+
+### Map, Crawl and Batch
+
+When one page is not enough. `ScavioExtractMapTool` answers in one call with a
+site's page URLs. `ScavioExtractCrawlTool` and `ScavioExtractBatchTool` start a
+background job, **wait up to `wait_seconds` (default 45, max 300)** for it to
+finish, and return the job's `id`, `status`, `pages`, `credits_used`, up to
+`limit` page results (default 10) and `next_cursor`. A job still `queued` or
+`running` when the wait ends keeps going: read it, and any further pages, with
+`ScavioExtractCrawlStatusTool` / `ScavioExtractBatchStatusTool` and the `id`.
+That keeps a task step bounded while a large crawl (up to 6 hours) runs on.
+
+```python
+import json
+
+from crewai_scavio import (
+    ScavioExtractBatchTool,
+    ScavioExtractCrawlStatusTool,
+    ScavioExtractCrawlTool,
+    ScavioExtractMapTool,
+)
+
+links = ScavioExtractMapTool().run(url="https://hono.dev/docs", limit=50)
+
+job = json.loads(
+    ScavioExtractCrawlTool().run(
+        url="https://hono.dev/docs", max_pages=25, include_paths=["/docs/**"]
+    )
+)
+if job["data"]["next_cursor"]:
+    more = ScavioExtractCrawlStatusTool().run(
+        id=job["data"]["id"], cursor=job["data"]["next_cursor"]
+    )
+
+batch = ScavioExtractBatchTool().run(
+    urls=["https://example.com/", "https://hono.dev/docs/getting-started/basic"]
+)
+```
+
+Map costs 1 credit in `normal` mode (`advanced` up to 2, `ultra` up to 10,
+priced by what the call needed). Crawl and batch bill **per successful page**
+at extract's price for the mode -- `normal` and `advanced` 1 credit, `ultra` 2
+-- while failed and skipped pages are free; a job stops cleanly with
+`stopped_reason: "insufficient_credits"` if the balance runs out. Reading a job
+is free. Crawl and map obey the site's robots.txt; results are kept for 3 days.
+Plan limits (pages per crawl / active jobs / URLs per batch): Free 10/1/10,
+PAYG 100/1/50, Project 500/2/100, Bootstrap 2,000/3/500, Startup 5,000/5/1,000,
+Growth 10,000/10/1,000. Cancellation, webhooks and idempotency keys exist on the
+[REST API](https://scavio.dev/docs/extract) and in the `scavio` SDK, but are
+not tools here.
 
 ### eBay Sold-Listing Price Research
 

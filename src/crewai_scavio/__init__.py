@@ -38,7 +38,14 @@ from crewai_scavio.ebay import (
     ScavioEbaySearchTool,
     ScavioEbaySellerTool,
 )
-from crewai_scavio.extract import ScavioExtractTool
+from crewai_scavio.extract import (
+    ScavioExtractBatchStatusTool,
+    ScavioExtractBatchTool,
+    ScavioExtractCrawlStatusTool,
+    ScavioExtractCrawlTool,
+    ScavioExtractMapTool,
+    ScavioExtractTool,
+)
 from crewai_scavio.g2 import (
     ScavioG2ProductTool,
     ScavioG2ReviewsTool,
@@ -444,4 +451,9 @@ __all__ = [
     "ScavioMetaAdsAdvertiserTool",
     "ScavioMetaAdsAdTool",
     "ScavioExtractTool",
+    "ScavioExtractMapTool",
+    "ScavioExtractCrawlTool",
+    "ScavioExtractCrawlStatusTool",
+    "ScavioExtractBatchTool",
+    "ScavioExtractBatchStatusTool",
 ]

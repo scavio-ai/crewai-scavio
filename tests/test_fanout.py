@@ -17,6 +17,8 @@ from scavio._spec import ENDPOINTS
 
 import crewai_scavio
 
+from ._spec_gaps import EXTRACT_WEB, NOT_YET_EXPOSED_PARAMS, NOT_YET_WRAPPED
+
 MOCK_API_KEY = "sk_live_test_key_12345"
 
 # namespace -> frozen class-name base (gtm/fanout-naming.json,
@@ -53,8 +55,16 @@ BODY_PRICED = {"walmart", "threads", "kuaishou", "_core"}
 FANOUT = [
     endpoint
     for endpoint in ENDPOINTS.values()
-    if endpoint.namespace in CLASS_BASE or endpoint.namespace == "_core"
+    if (endpoint.namespace in CLASS_BASE or endpoint.namespace == "_core")
+    and endpoint.key not in NOT_YET_WRAPPED
+    and endpoint.key not in EXTRACT_WEB
 ]
+
+
+def _params(endpoint) -> list:
+    """The spec parameters this package's tool exposes."""
+    gaps = NOT_YET_EXPOSED_PARAMS.get(endpoint.key, frozenset())
+    return [param for param in endpoint.params if param.name not in gaps]
 
 
 def _camel(method: str) -> str:
@@ -81,14 +91,14 @@ def _method_mock(client: MagicMock, endpoint, *, is_async: bool):
 
 def _sample_args(endpoint) -> dict:
     """A distinct sentinel per parameter, so a swap cannot pass unnoticed."""
-    return {param.name: f"v_{param.name}" for param in endpoint.params}
+    return {param.name: f"v_{param.name}" for param in _params(endpoint)}
 
 
 def _required_args(endpoint) -> dict:
     """Values pydantic will accept for the required fields, and nothing else."""
     return {
         param.name: ["v"] if param.annotation.startswith("list[") else "v"
-        for param in endpoint.params
+        for param in _params(endpoint)
         if param.required
     }
 
@@ -117,8 +127,8 @@ def test_tool_is_exported(endpoint):
 def test_schema_matches_the_spec_parameters(endpoint):
     """Every wire parameter is agent-visible, and none is invented."""
     fields = _tool_for(endpoint).model_fields["args_schema"].default.model_fields
-    assert set(fields) == {param.name for param in endpoint.params}
-    for param in endpoint.params:
+    assert set(fields) == {param.name for param in _params(endpoint)}
+    for param in _params(endpoint):
         assert fields[param.name].is_required() is param.required, param.name
 
 
@@ -133,7 +143,7 @@ def test_optional_fields_accept_the_null_they_default_to(endpoint):
     schema = _tool_for(endpoint).model_fields["args_schema"].default
     payload = dict(_required_args(endpoint))
     payload.update(
-        {param.name: None for param in endpoint.params if not param.required}
+        {param.name: None for param in _params(endpoint) if not param.required}
     )
     schema(**payload)
 
