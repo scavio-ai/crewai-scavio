@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 193 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 201 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
 
 - **Search and web** -- Google (web, AI Mode, news, maps, shopping, flights, hotels, trends) and `ScavioExtractTool`, which reads any URL as HTML, Markdown or plain text, plus `ScavioExtractMapTool`, `ScavioExtractCrawlTool` and `ScavioExtractBatchTool` to map a site's URLs, crawl a whole site, or extract a list of pages in one job
 - **Retail** -- Amazon, Walmart, eBay, Target, Home Depot, TikTok Shop
@@ -145,6 +145,14 @@ print(result)
 | Instagram | `ScavioInstagramSearchHashtagsTool` | Hashtag search by keyword |
 | Instagram | `ScavioInstagramUserFollowersTool` | User's followers |
 | Instagram | `ScavioInstagramUserFollowingsTool` | User's followings |
+| Instagram | `ScavioInstagramUserHighlightsTool` | User's story highlights (id, title, cover, item count) |
+| Instagram | `ScavioInstagramHighlightStoriesTool` | Every story in one highlight, with media URLs |
+| Instagram | `ScavioInstagramSearchReelsTool` | Reels search by keyword |
+| Instagram | `ScavioInstagramSearchMusicTool` | Audio track search by song or artist |
+| Instagram | `ScavioInstagramMusicPostsTool` | Reels that use an audio track, plus its reel count (1 credit) |
+| Instagram | `ScavioInstagramSearchLocationsTool` | Place search by name (address, coordinates) |
+| Instagram | `ScavioInstagramUserSimilarTool` | Accounts similar to a user |
+| Instagram | `ScavioInstagramPostLikersTool` | Accounts that liked a post (up to ~1,000), plus like count |
 | X | `ScavioXSearchTool` | Tweet / people search (query field is `search`) |
 | X | `ScavioXTweetTool` | Tweet details by id |
 | X | `ScavioXTweetCommentsTool` | Replies to a tweet |
