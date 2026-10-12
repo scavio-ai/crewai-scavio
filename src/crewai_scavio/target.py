@@ -1,12 +1,7 @@
 """Scavio Target tools for CrewAI.
 
-1 credit flat (TARGET_CREDIT_COST = scrapedoCreditCost(5) -- reached via the
-headless browser, 5 upstream, still 1 customer credit; the 2-credit rule
-triggers above 10).
+1 credit flat.
 
-- PRICE SETTLED 2026-08-09: stays at 1 credit. redsky refuses scrape.do's proxy
-  pools and is now reached through the headless browser (5 upstream). The
-  2-credit rule triggers above 10 upstream, so no reprice.
 - LATENCY IS THE DOC RISK, not price: product ~4s, search ~9s, category ~37s,
   reviews ~40s; a 502-then-retry was observed at 105s. Do not overpromise
   speed.

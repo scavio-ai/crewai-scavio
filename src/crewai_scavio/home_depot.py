@@ -1,14 +1,13 @@
 """Scavio Home Depot tools for CrewAI.
 
-2 credits flat on all three endpoints (HOMEDEPOT_CREDIT_COST =
-scrapedoCreditCost(10), premium per-domain table).
+2 credits flat on all three endpoints.
 
 - Search page size is FIXED at 12 (HOMEDEPOT_PAGE_SIZE) with no way to change
   it -- paging is the only way to read further.
 - Reviews are 30 per page; total_pages is the last that exists and asking past
   it is a 404.
 - sort_by is CLOSED because Home Depot does NOT fall back on an unknown sort --
-  it answers 200 with an empty page that scrape.do still bills. 'Newest'
+  it answers 200 with an empty page that is still billed. 'Newest'
   (arrivaldate) is deliberately absent: it works on category pages and is
   rejected on keyword search.
 - The product endpoint carries only a 10-review preview; /reviews is the

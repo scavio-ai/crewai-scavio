@@ -1,12 +1,9 @@
 """Scavio Google Play tools for CrewAI.
 
-2 credits flat on all three endpoints (GOOGLEPLAY_CREDIT_COST =
-scrapedoCreditCost(10), premium per-domain table, bills 10 upstream). NOT the
-1-credit Google-exempt price -- this is a SEPARATE namespace from `google`
-partly because of that.
+2 credits flat on all three endpoints. NOT the 1-credit Google price -- this
+is a SEPARATE namespace from `google`.
 
-- NO PAGINATION ON SEARCH -- one shelf of ~30 apps. Data is in
-  AF_initDataCallback arrays parsed POSITIONALLY: brittle, pinned by fixtures.
+- NO PAGINATION ON SEARCH -- one shelf of ~30 apps.
 - `hl` changes the storefront, not only the strings: at hl=pt-BR the title,
   description, install formatting and content rating all move with it. Play
   silently falls back to English/US on values it does not serve.

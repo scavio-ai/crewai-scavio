@@ -1,7 +1,6 @@
 """Scavio Tripadvisor tools for CrewAI.
 
-2 credits flat on all four endpoints (TRIPADVISOR_CREDIT_COST =
-scrapedoCreditCost(10), premium per-domain table).
+2 credits flat on all four endpoints.
 
 - LOOKUP FIRST. /tripadvisor/locations was added after the first build shipped
   without one. Every other endpoint is keyed by ids that exist only inside

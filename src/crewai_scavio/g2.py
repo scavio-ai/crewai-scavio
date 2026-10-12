@@ -1,16 +1,11 @@
 """Scavio G2 Software Reviews tools for CrewAI.
 
-5 credits flat on all three endpoints (G2_CREDIT_COST = scrapedoCreditCost(25))
--- the ONLY 5-credit platform and the thinnest margin we serve. Every surface
-must show the 5 prominently.
+5 credits flat on all three endpoints -- the ONLY 5-credit platform. Every
+surface must show the 5 prominently.
 
-- THINNEST MARGIN WE SERVE. g2.com bills 25 scrape.do credits per call with
-  neither render nor super asked for. A 3x retry would cost 75 upstream
-  credits, so retry policy is deliberately conservative.
-- A BOT WALL OR HOLLOW SHELL ON G2 IS A BILLED 502: it arrives as a real HTTP
-  200 that scrape.do charged all 25 credits for, so the caller is charged for a
-  page we could not use. This is the opposite of Yelp's behaviour.
-- An unknown `order` is SILENTLY ACCEPTED upstream -- order=zzznotasort answers
+- A BLOCKED OR EMPTY G2 PAGE IS A BILLED 502, so retry at most once or twice.
+  This is the opposite of Yelp's behaviour.
+- An unknown `order` is SILENTLY ACCEPTED by G2 -- order=zzznotasort answers
   200 with a full result set in some unstated ordering, so the sort never ran
   and nothing says so. Hence closed enums.
 - An unknown filters[...] value MATCHES NOTHING -- a bogus company_segment id

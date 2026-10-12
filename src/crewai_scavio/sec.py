@@ -1,19 +1,15 @@
 """Scavio SEC EDGAR tools for CrewAI.
 
-1 credit flat on all six endpoints (SEC_CREDIT_COST = scrapedoCreditCost(1)) --
-official free JSON API. include_history can buy up to 10 upstream fetches and
+1 credit flat on all six endpoints. include_history can take up to 10 lookups and
 is DELIBERATELY still 1 credit.
 
 - LOOKUP FIRST. Callers hold a ticker (AAPL); the API is keyed by CIK
   (0000320193). Same problem class as TripAdvisor geo_id. Docs must lead with
   /sec/lookup. (Both cik and ticker fields accept either spelling, which
   softens it but does not remove the need.)
-- Requires a descriptive User-Agent -- the SEC rejects undeclared clients. Sent
-  via customHeaders. The shared scrapedo-client still needs a `headers` option;
-  three platforms duplicate a local getter (yelp, sec, googleads).
 - filings.recent is COLUMNAR -- parallel arrays zipped by index. A ragged column
   would misalign filing dates against accession numbers; adversarially checked.
-- `include_history` is the ONE call that can buy more than one upstream fetch
+- `include_history` is the ONE call that can take more than one lookup
   (up to 10 archived shards, MAX_HISTORY_SHARDS) and is deliberately still ONE
   Scavio credit. history_truncated flags when a filer had more.
 """

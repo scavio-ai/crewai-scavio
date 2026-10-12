@@ -1,11 +1,8 @@
 """Scavio Companies House tools for CrewAI.
 
-1 credit flat on all four endpoints (COMPANIESHOUSE_CREDIT_COST =
-scrapedoCreditCost(1)) -- official UK registry.
+1 credit flat on all four endpoints.
 
 - LOOKUP (search) FIRST -- everything else is keyed by company number.
-- A free API key would give cleaner JSON; worth registering if this gets
-  traffic.
 - company_number is deliberately LOOSE (no regex): the register 404s on
   /company/445790 and /company/sc090312 for companies that exist, so the
   transport pads and upper-cases. A route regex would reject the very inputs

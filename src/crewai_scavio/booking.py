@@ -1,7 +1,6 @@
 """Scavio Booking.com tools for CrewAI.
 
-1 credit flat on all three endpoints (BOOKING_CREDIT_COST =
-scrapedoCreditCost(1)).
+1 credit flat on all three endpoints.
 
 - checkin and checkout must be sent TOGETHER -- Booking ignores a lone checkin
   and prices its own default range, returning real prices for dates the caller
@@ -9,8 +8,7 @@ scrapedoCreditCost(1)).
 - The property endpoint takes dates for the same reason search does: Booking
   prices a STAY. Omitting them returns prices for a two-night range Booking
   chose; the response echoes whichever dates were used.
-- currency defaults to USD in the transport. With no currency Booking prices
-  off the proxy exit and two identical requests disagree.
+- currency defaults to USD. With no currency Booking picks a currency itself and two identical requests can disagree.
 - min_review_score is an enum ('6','7','8','9') -- an arbitrary threshold is
   silently dropped upstream.
 """
@@ -151,7 +149,7 @@ class _BookingSearchInput(BaseModel):
         default=None,
         description=(
             "ISO 4217 currency for prices, 3 letters (default 'USD'). Without it "
-            "Booking prices off the proxy exit and identical requests disagree."
+            "Booking picks a currency itself and identical requests can disagree."
         ),
     )
 
@@ -206,7 +204,7 @@ class _BookingHotelInput(BaseModel):
         default=None,
         description=(
             "ISO 4217 currency for prices, 3 letters (default 'USD'). Without it "
-            "Booking prices off the proxy exit and identical requests disagree."
+            "Booking picks a currency itself and identical requests can disagree."
         ),
     )
 

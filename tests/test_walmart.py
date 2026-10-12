@@ -1,6 +1,6 @@
 """Tests for Scavio Walmart tools.
 
-Walmart was rebuilt on scrape.do: ``device``, ``delivery_zip`` and ``store_id``
+Walmart was rebuilt: ``device``, ``delivery_zip`` and ``store_id``
 are retired (the API answers 200 with a ``warnings[]`` array if you send them),
 five endpoints are new, and ``domain`` is the price-bearing parameter. These
 tests pin the shape the tools must have after that rebuild, not the one they

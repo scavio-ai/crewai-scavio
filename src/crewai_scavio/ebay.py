@@ -1,7 +1,6 @@
 """Scavio eBay tools for CrewAI.
 
-1 credit flat on all three endpoints (EBAY_CREDIT_COST =
-scrapedoCreditCost(1)).
+1 credit flat on all three endpoints.
 
 - `seller` is a PROFILE endpoint -- it cannot enumerate a catalogue. The
   paginated way to list a seller's inventory is /search with `seller` set,
@@ -11,8 +10,8 @@ scrapedoCreditCost(1)).
   view eBay publishes no headline count, so total_results is null.
 - per_page accepts only 60, 120 or 240; eBay silently falls back to 60 for
   anything else.
-- sort 'Distance: nearest first' is deliberately absent (ranks against our
-  proxy exit, not the caller).
+- sort 'Distance: nearest first' is deliberately absent (it would not rank
+  by the location of the caller).
 """
 
 
@@ -64,8 +63,7 @@ class _EbaySearchInput(BaseModel):
         default=None,
         description=(
             "Result sort order. Defaults to 'best_match'. eBay's 'Distance: nearest "
-            "first' is deliberately unsupported (it ranks against our proxy exit, not "
-            "the caller)."
+            "first' is deliberately unsupported (it would not rank by the location of the caller)."
         ),
     )
     min_price: float | None = Field(
@@ -183,8 +181,7 @@ class ScavioEbaySearchTool(ScavioBaseTool):
                 ebay.com/usr/<name>.
             page: Results page, 1-based.
             sort_by: Result sort order. Defaults to 'best_match'. eBay's 'Distance:
-                nearest first' is deliberately unsupported (it ranks against our proxy
-                exit, not the caller).
+                nearest first' is deliberately unsupported (it would not rank by the location of the caller).
             min_price: Minimum price, inclusive. Must be 0 or greater.
             max_price: Maximum price, inclusive. Must be 0 or greater.
             condition: Item condition filter. 'refurbished' is eBay's parent condition,
@@ -241,8 +238,7 @@ class ScavioEbaySearchTool(ScavioBaseTool):
                 ebay.com/usr/<name>.
             page: Results page, 1-based.
             sort_by: Result sort order. Defaults to 'best_match'. eBay's 'Distance:
-                nearest first' is deliberately unsupported (it ranks against our proxy
-                exit, not the caller).
+                nearest first' is deliberately unsupported (it would not rank by the location of the caller).
             min_price: Minimum price, inclusive. Must be 0 or greater.
             max_price: Maximum price, inclusive. Must be 0 or greater.
             condition: Item condition filter. 'refurbished' is eBay's parent condition,

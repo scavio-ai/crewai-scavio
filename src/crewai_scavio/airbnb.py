@@ -1,19 +1,14 @@
 """Scavio Airbnb tools for CrewAI.
 
-1 credit flat on all three endpoints (AIRBNB_CREDIT_COST =
-scrapedoCreditCost(1); render was tested and returns the same body for 5x the
-price).
+1 credit flat on all three endpoints.
 
-- STALE QUEUE CAVEAT: the queue says /reviews returns NO review bodies. The
-  BACKEND NOW RETURNS BODIES -- getScrapedoAirbnbReviews hits the legacy v2 REST
-  endpoint (api/v2/homes_pdp_reviews) with real comments, per-review rating,
-  localized_date and reviewer, verified live 2026-08-09 on three listings. Docs
-  should describe real review bodies with limit/offset paging.
+- /reviews returns real review bodies: comments, per-review rating,
+  localized_date and reviewer, with limit/offset paging.
 - The `limit`/`offset` param names are load-bearing: the underscored
   `_limit`/`_offset` used elsewhere in Airbnb's v2 API are silently ignored
   here and return a fixed 7 rows at every offset.
 - LISTING HAS NO PRICE FIELD. The room page carries no nightly rate under any
-  parameters, with or without dates, and under render. Prices are SEARCH-ONLY.
+  parameters, with or without dates. Prices are SEARCH-ONLY.
 - The rating breakdown (six category ratings, five-bucket star distribution,
   AI-synthesised review tags) lives on /listing, which server-renders it -- NOT
   on /reviews.
@@ -139,7 +134,7 @@ class _AirbnbSearchInput(BaseModel):
         default=None,
         description=(
             "ISO 4217 currency for prices, 3 letters (default 'USD'). Without it "
-            "Airbnb prices off the proxy exit and identical requests disagree."
+            "Airbnb picks a currency itself and identical requests can disagree."
         ),
     )
     page: int | None = Field(

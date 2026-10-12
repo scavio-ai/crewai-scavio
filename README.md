@@ -271,7 +271,7 @@ offers_tool = ScavioAmazonOffersTool()
 offers = offers_tool.run(asin="B08N5WRWNW")
 ```
 
-> **Amazon changed in 0.4.0 (breaking).** The upstream provider moved. `domain`
+> **Amazon changed in 0.4.0 (breaking).** The Amazon endpoint changed. `domain`
 > is replaced by `country`, a two-letter marketplace code (`us`, `gb` -- the UK
 > is `gb`, not `uk` -- `de`, `jp`, ...). `sort_by`, `pages`, `category_id`,
 > `merchant_id`, `language`, `currency`, `device`, `zip_code` and

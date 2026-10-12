@@ -1,14 +1,9 @@
 """Scavio Redfin tools for CrewAI.
 
-1 credit flat on all three endpoints (REDFIN_CREDIT_COST =
-scrapedoCreditCost(1)) -- internal stingray JSON API.
+1 credit flat on all three endpoints.
 
-- Responses are prefixed with a 4-char anti-hijack guard that must be stripped.
-- days_on_market IS ALWAYS NULL: mainHouseInfo has no `dom` key. OWNER DECISION
-  OPEN -- drop the field or find its real source. Do not document it as
-  populated.
-- CITY NAMES ARE NOT ACCEPTED on `location`: Redfin's own name lookup is the
-  single path its edge blocks our proxy pool from. Pass a redfin.com region URL
+- days_on_market IS ALWAYS NULL. Do not document it as populated.
+- CITY NAMES ARE NOT ACCEPTED on `location`. Pass a redfin.com region URL
   (/city/, /neighborhood/, /county/, /zipcode/) or region_id + region_type.
 - region_id is NOT a ZIP code -- different number spaces, and a ZIP there
   resolves to another city rather than failing.

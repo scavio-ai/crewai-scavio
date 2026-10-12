@@ -6,7 +6,7 @@ detail costs 30 -- the most expensive call in the whole Scavio API. Every tool
 below states its own cost.
 
 Five LinkedIn paths (person/contact, company/people, company/jobs,
-search/people, search/posts) were retired by the upstream provider and now
+search/people, search/posts) were retired and now
 answer HTTP 410 unbilled. They are deliberately NOT exposed as tools: an agent
 should never be able to plan a step that cannot succeed. Where a substitute
 exists it is named in the replacement tool's description --
@@ -237,7 +237,7 @@ class ScavioLinkedInPersonAboutTool(ScavioBaseTool):
     description: str = (
         "Fetch just the about/overview block of a LinkedIn profile: about, "
         "headline, education_summary, experiences, educations, "
-        "honors_and_awards and bio_links. Same upstream call as the full "
+        "honors_and_awards and bio_links. Same lookup as the full "
         "person tool, shaped down. Costs 1 credit."
     )
     args_schema: Type[BaseModel] = _PersonInput

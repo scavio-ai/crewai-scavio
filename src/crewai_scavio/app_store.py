@@ -1,7 +1,6 @@
 """Scavio Apple App Store tools for CrewAI.
 
-1 credit flat on all three endpoints (APPSTORE_CREDIT_COST =
-scrapedoCreditCost(1)) -- official iTunes JSON API.
+1 credit flat on all three endpoints.
 
 - SEARCH HAS NO PAGINATION. `limit` (1..200) is the only lever; every offset
   spelling is silently ignored. Docs must say 'raise limit', never 'page'.

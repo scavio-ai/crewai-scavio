@@ -1,11 +1,9 @@
 """Scavio Glassdoor tools for CrewAI.
 
-1 credit flat on all four endpoints (GLASSDOOR_CREDIT_COST =
-scrapedoCreditCost(5), render-only domain). NOTE: addressing /reviews or
-/salaries by employer_id costs TWO upstream fetches (10 scrape.do credits for 1
-customer credit) -- the customer price does not change, but the single-fetch
-path (pass back reviews_url / salaries_url as `url`) should still lead the
-docs.
+1 credit flat on all four endpoints. NOTE: addressing /reviews or /salaries
+by employer_id takes an extra lookup -- the customer price does not change, but
+the faster path (pass back reviews_url / salaries_url as `url`) should still
+lead the docs.
 
 - LOOKUP FIRST. /glassdoor/companies was added after the first build shipped
   without one. /company, /reviews and /salaries all take an employer_id that
@@ -14,8 +12,6 @@ docs.
 - REVIEWS ARE CAPPED AT THREE per response by Glassdoor's login wall. There is
   deliberately NO `page` param on /reviews -- use category and employment_status
   to move the window, and filtered_review_count to see how many match.
-- Requires `render` -- the plain pool times out 3/3. 5 upstream credits for 1
-  customer credit.
 - SLOW AND FLAKY: per-attempt success 48% across 25 attempts, per-call 87%.
   Latency company ~3-47s, reviews ~75s, salaries ~41s; a fully failing call can
   take ~172s before its 502.
@@ -90,8 +86,7 @@ class _GlassdoorReviewsInput(BaseModel):
         default=None,
         description=(
             "Glassdoor employer id (1-50 characters): '1699', 'E1699' or 'IE1699'. "
-            "Must be a STRING - a JSON number is rejected. Addressing by id costs two "
-            "upstream fetches; the customer price is unchanged."
+            "Must be a STRING - a JSON number is rejected. Addressing by id takes an extra lookup; the customer price is unchanged."
         ),
     )
     company: str | None = Field(
@@ -135,8 +130,7 @@ class _GlassdoorSalariesInput(BaseModel):
         default=None,
         description=(
             "Glassdoor employer id (1-50 characters): '1699', 'E1699' or 'IE1699'. "
-            "Must be a STRING - a JSON number is rejected. Addressing by id costs two "
-            "upstream fetches; the customer price is unchanged."
+            "Must be a STRING - a JSON number is rejected. Addressing by id takes an extra lookup; the customer price is unchanged."
         ),
     )
     company: str | None = Field(

@@ -1,15 +1,11 @@
 """Scavio Google Ads Transparency tools for CrewAI.
 
-1 credit flat on all three endpoints (V2_GOOGLE_CREDIT_COST) -- GOOGLE-EXEMPT:
-bills 10 upstream but Google is absorbed rather than passed on.
+1 credit flat on all three endpoints.
 
-- Plain JSON-RPC at /anji/_/rpc/; customHeaders=true is MANDATORY or Google
-  400s the binary body.
 - IMPRESSIONS AND REACH ARE EEA-ONLY (DSA-compelled). US creatives return null
   for impressions_min/max/first_shown -- not a bug, Google only publishes reach
   where law requires. The playground should default to an EEA example.
-- SEARCH NOW PAGINATES (shipped 2026-08-10, backend abb227e / dashboard
-  09c7722): `cursor` request param + `next_cursor` response field, 100/page.
+- SEARCH PAGINATES: `cursor` request param + `next_cursor` response field, 100/page.
   Re-send the SAME filters with the cursor. Docs/SDK/MCP propagation MUST
   document cursor/next_cursor.
 - /advertisers (autocomplete, ~20/arm) and /creative do NOT paginate.

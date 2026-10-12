@@ -1,7 +1,6 @@
 """Scavio Capterra Software Reviews tools for CrewAI.
 
-2 credits flat on all three endpoints (CAPTERRA_CREDIT_COST =
-scrapedoCreditCost(10), premium per-domain table).
+2 credits flat on all three endpoints.
 
 - Product `vendor` is NULL -- Capterra does not publish it as structured data on
   the product page (verified). The reviews name the vendor per review.

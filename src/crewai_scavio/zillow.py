@@ -1,7 +1,6 @@
 """Scavio Zillow tools for CrewAI.
 
-1 credit flat on all three endpoints (ZILLOW_CREDIT_COST =
-scrapedoCreditCost(1), plain datacenter pool).
+1 credit flat on all three endpoints.
 
 - A bare ZIP works alone but CANNOT be combined with a filter or a sort --
   Zillow resolves it by geolocation on that request shape and answers about

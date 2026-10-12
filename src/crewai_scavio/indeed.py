@@ -1,11 +1,10 @@
 """Scavio Indeed tools for CrewAI.
 
-2 credits flat on all four endpoints (INDEED_CREDIT_COST =
-scrapedoCreditCost(10), premium per-domain table).
+2 credits flat on all four endpoints.
 
 - radius is a closed set (0,5,10,15,25,35,50,100) -- Indeed IGNORES anything
   else and returns the unfiltered set, so a caller asking for 7 miles would be
-  billed for a search covering fifty. Upstream default is 50.
+  billed for a search covering fifty. Indeed's default is 50.
 - max_age_days is a closed set (1,3,7,14) for the same reason.
 - min_salary filters on INDEED'S OWN ESTIMATE for the role, not a posted
   figure, so postings publishing no salary still match. Docs must say this.

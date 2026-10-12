@@ -1,7 +1,6 @@
 """Scavio Yelp tools for CrewAI.
 
-2 credits flat on all three endpoints (YELP_CREDIT_COST =
-scrapedoCreditCost(10), premium per-domain table).
+2 credits flat on all three endpoints.
 
 - REVIEWS PAGE 1 IS REDUNDANT: it re-fetches the same document /business
   already returned, and costs another 2 credits. The playground defaults
@@ -9,8 +8,7 @@ scrapedoCreditCost(10), premium per-domain table).
 - popular_items has a stub-shell state (2 of 6 fetches returned 8 rows with
   every field null but `identifier`). Stub rows are dropped and
   popular_items_omitted flags it.
-- location is effectively required -- Yelp geolocates a location-less search off
-  the proxy exit, so the same request answers about a different metro run to
+- location is effectively required -- without it Yelp picks a location itself, so the same request can answer about a different metro run to
   run.
 - Yelp fixes the page size at 10 for both search and reviews. A page past the
   last review is a 404, not an empty result.
@@ -50,8 +48,7 @@ class _YelpSearchInput(BaseModel):
         default=None,
         description=(
             "Where to look (1-200 characters): city and region, a full address, or a "
-            "postcode. Effectively required - Yelp geolocates a location-less search "
-            "off the proxy exit, so the same request answers about a different metro "
+            "postcode. Effectively required - without it Yelp picks a location itself, so the same request can answer about a different metro "
             "run to run."
         ),
     )

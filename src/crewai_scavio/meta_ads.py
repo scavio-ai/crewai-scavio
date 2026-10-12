@@ -1,20 +1,18 @@
 """Scavio Meta Ad Library tools for CrewAI.
 
-1 credit flat on all three endpoints (METAADS_CREDIT_COST =
-scrapedoCreditCost(1)). Each cursor page is another credit, so 'scrape the
-whole library' is real but the cost scales with depth (~10 ads per credit past
+1 credit flat on all three endpoints. Each cursor page is another credit, so
+reading the whole library is real but the cost scales with depth (~10 ads per credit past
 the first 30) -- docs must say this.
 
-- THE HOST IS LOAD-BEARING: business.facebook.com works;
-  www.facebook.com/ads/library 502s on every proxy option. Any doc/SDK example
-  MUST use the endpoints, never a www URL.
+- Any doc/SDK example MUST use the endpoints, never a
+  www.facebook.com/ads/library URL.
 - total_results caps at 50000 with total_is_capped:true -- Meta only reports
   '>50,000'. Do not present it as an exact count.
 - Political/issue ads carry spend, reach, impressions and the paid-for-by
   disclosure; commercial ads leave those NULL (expected, not a bug). Set
   ad_type=political_and_issue_ads to expose them.
-- FULL CURSOR PAGINATION on search + advertiser: page 1 = 30 ads via SSR, then
-  10/page via a GraphQL POST off next_cursor. Walk has_next_page to scrape a
+- FULL CURSOR PAGINATION on search + advertiser: page 1 = 30 ads, then
+  10/page via next_cursor. Walk has_next_page to read a
   whole query or advertiser. THE BIG DIFFERENTIATOR over the $79-399/mo tools --
   lead with it.
 """
