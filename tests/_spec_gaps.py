@@ -70,6 +70,10 @@ NOT_YET_WRAPPED = frozenset(
         "x_search_communities",
         "youtube_community_post",
         "youtube_community_post_comments",
+        # Added to the SDK between 0.24.0 and 0.27.0, not wrapped here yet.
+        "chatgpt_prompt",
+        "gemini_prompt",
+        "google_custom_search",
     }
 )
 

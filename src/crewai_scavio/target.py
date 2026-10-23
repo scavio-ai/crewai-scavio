@@ -58,8 +58,8 @@ class _TargetSearchInput(BaseModel):
     store_id: str | None = Field(
         default=None,
         description=(
-            "Numeric Target store id whose prices and availability the response "
-            "reflects. Defaults to '3991', the store target.com uses with no store "
+            "Numeric Target store id whose prices the response reflects "
+            "(in-store stock: ScavioTargetAvailabilityTool). Defaults to '3991', the store target.com uses with no store "
             "context."
         ),
     )
@@ -93,8 +93,8 @@ class _TargetCategoryInput(BaseModel):
     store_id: str | None = Field(
         default=None,
         description=(
-            "Numeric Target store id whose prices and availability the response "
-            "reflects. Defaults to '3991'."
+            "Numeric Target store id whose prices the response reflects "
+            "(in-store stock: ScavioTargetAvailabilityTool). Defaults to '3991'."
         ),
     )
 
@@ -112,8 +112,8 @@ class _TargetProductInput(BaseModel):
     store_id: str | None = Field(
         default=None,
         description=(
-            "Numeric Target store id whose prices and availability the response "
-            "reflects. Defaults to '3991'."
+            "Numeric Target store id whose prices the response reflects "
+            "(in-store stock: ScavioTargetAvailabilityTool). Defaults to '3991'."
         ),
     )
 
@@ -135,9 +135,30 @@ class _TargetReviewsInput(BaseModel):
     store_id: str | None = Field(
         default=None,
         description=(
-            "Numeric Target store id whose prices and availability the response "
-            "reflects. Defaults to '3991'."
+            "Numeric Target store id whose prices the response reflects "
+            "(in-store stock: ScavioTargetAvailabilityTool). Defaults to '3991'."
         ),
+    )
+
+
+class _TargetAvailabilityInput(BaseModel):
+    """Input schema for ScavioTargetAvailabilityTool."""
+
+    tcin: str = Field(
+        ...,
+        description="Target catalog id (tcin, e.g. '85978609').",
+    )
+    zip: str = Field(
+        ...,
+        description="5-digit US ZIP code to search around.",
+    )
+    radius: int | None = Field(
+        default=None,
+        description="Search radius in miles, 1-100. Defaults to 25. At most 20 stores.",
+    )
+    store_id: str | None = Field(
+        default=None,
+        description="Return only this Target store. It must be within radius of zip.",
     )
 
 
@@ -174,8 +195,7 @@ class ScavioTargetSearchTool(ScavioBaseTool):
             count: Results per page, 1-28. Defaults to 24; Target rejects anything above
                 28 outright.
             sort: Result sort order. Defaults to 'relevance'.
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised search results.
@@ -207,8 +227,7 @@ class ScavioTargetSearchTool(ScavioBaseTool):
             count: Results per page, 1-28. Defaults to 24; Target rejects anything above
                 28 outright.
             sort: Result sort order. Defaults to 'relevance'.
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised search results.
@@ -254,8 +273,7 @@ class ScavioTargetCategoryTool(ScavioBaseTool):
             count: Results per page, 1-28. Defaults to 24; Target rejects anything above
                 28 outright.
             sort: Result sort order. Defaults to 'relevance'.
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised results.
@@ -288,8 +306,7 @@ class ScavioTargetCategoryTool(ScavioBaseTool):
             count: Results per page, 1-28. Defaults to 24; Target rejects anything above
                 28 outright.
             sort: Result sort order. Defaults to 'relevance'.
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised results.
@@ -323,8 +340,7 @@ class ScavioTargetProductTool(ScavioBaseTool):
 
         Args:
             tcin: Target catalog id (tcin, e.g. '1010453160').
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised product details.
@@ -337,8 +353,7 @@ class ScavioTargetProductTool(ScavioBaseTool):
 
         Args:
             tcin: Target catalog id (tcin, e.g. '1010453160').
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised product details.
@@ -372,8 +387,7 @@ class ScavioTargetReviewsTool(ScavioBaseTool):
         Args:
             tcin: Target catalog id (tcin, e.g. '1010453160').
             limit: Trim the returned reviews to at most this many (1 or greater).
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised reviews.
@@ -394,8 +408,7 @@ class ScavioTargetReviewsTool(ScavioBaseTool):
         Args:
             tcin: Target catalog id (tcin, e.g. '1010453160').
             limit: Trim the returned reviews to at most this many (1 or greater).
-            store_id: Numeric Target store id whose prices and availability the response
-                reflects.
+            store_id: Numeric Target store id whose prices the response reflects.
 
         Returns:
             JSON-serialised reviews.
@@ -406,4 +419,74 @@ class ScavioTargetReviewsTool(ScavioBaseTool):
             store_id=store_id,
         )
         raw = self._truncate_nested(raw, "data", "reviews")
+        return self._format_response(raw)
+
+
+class ScavioTargetAvailabilityTool(ScavioBaseTool):
+    """In-store stock for a Target product at every store near a ZIP: units available,
+    in-store, pickup, curbside and ship-to-store status.
+    """
+
+    name: str = "Scavio Target Availability"
+    description: str = (
+        "In-store stock for a Target product at every store near a ZIP: units "
+        "available, in-store, pickup, curbside and ship-to-store status, distance, "
+        "address and hours. Costs 1 credit."
+    )
+    args_schema: Type[BaseModel] = _TargetAvailabilityInput
+
+    def _run(
+        self,
+        tcin: str,
+        zip: str,
+        radius: int | None = None,
+        store_id: str | None = None,
+        **kwargs: Any,
+    ) -> str:
+        """Call /api/v1/target/availability synchronously.
+
+        Args:
+            tcin: Target catalog id (tcin, e.g. '85978609').
+            zip: 5-digit US ZIP code to search around.
+            radius: Search radius in miles, 1-100. Defaults to 25.
+            store_id: Return only this Target store.
+
+        Returns:
+            JSON-serialised store availability.
+        """
+        raw = self.client.target.availability(
+            tcin=tcin,
+            zip=zip,
+            radius=radius,
+            store_id=store_id,
+        )
+        raw = self._truncate_nested(raw, "data", "stores")
+        return self._format_response(raw)
+
+    async def _arun(
+        self,
+        tcin: str,
+        zip: str,
+        radius: int | None = None,
+        store_id: str | None = None,
+        **kwargs: Any,
+    ) -> str:
+        """Call /api/v1/target/availability asynchronously.
+
+        Args:
+            tcin: Target catalog id (tcin, e.g. '85978609').
+            zip: 5-digit US ZIP code to search around.
+            radius: Search radius in miles, 1-100. Defaults to 25.
+            store_id: Return only this Target store.
+
+        Returns:
+            JSON-serialised store availability.
+        """
+        raw = await self.async_client.target.availability(
+            tcin=tcin,
+            zip=zip,
+            radius=radius,
+            store_id=store_id,
+        )
+        raw = self._truncate_nested(raw, "data", "stores")
         return self._format_response(raw)

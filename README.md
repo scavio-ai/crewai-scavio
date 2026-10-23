@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 201 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 202 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
 
 - **Search and web** -- Google (web, AI Mode, news, maps, shopping, flights, hotels, trends) and `ScavioExtractTool`, which reads any URL as HTML, Markdown or plain text, plus `ScavioExtractMapTool`, `ScavioExtractCrawlTool` and `ScavioExtractBatchTool` to map a site's URLs, crawl a whole site, or extract a list of pages in one job
 - **Retail** -- Amazon, Walmart, eBay, Target, Home Depot, TikTok Shop
@@ -200,6 +200,7 @@ print(result)
 | Target | `ScavioTargetCategoryTool` | Products in a category, plus the breadcrumb |
 | Target | `ScavioTargetProductTool` | Product details by TCIN |
 | Target | `ScavioTargetReviewsTool` | Reviews with per-attribute averages and guest photos |
+| Target | `ScavioTargetAvailabilityTool` | In-store stock at every Target near a ZIP: units, pickup, in-store |
 | Home Depot | `ScavioHomeDepotSearchTool` | Search with per-store pricing and availability |
 | Home Depot | `ScavioHomeDepotProductTool` | Full item detail, spec table and documents |
 | Home Depot | `ScavioHomeDepotReviewsTool` | Review bodies and the rating distribution |

@@ -104,8 +104,8 @@ def _required_args(endpoint) -> dict:
 
 
 def test_fanout_is_the_expected_size():
-    """93 endpoints across 22 platforms plus the top-level extract."""
-    assert len(FANOUT) == 93
+    """94 endpoints across 22 platforms plus the top-level extract."""
+    assert len(FANOUT) == 94
     assert len({endpoint.namespace for endpoint in FANOUT}) == 23
 
 

@@ -176,6 +176,7 @@ from crewai_scavio.sec import (
     ScavioSECSearchTool,
 )
 from crewai_scavio.target import (
+    ScavioTargetAvailabilityTool,
     ScavioTargetCategoryTool,
     ScavioTargetProductTool,
     ScavioTargetReviewsTool,
@@ -408,6 +409,7 @@ __all__ = [
     "ScavioTargetCategoryTool",
     "ScavioTargetProductTool",
     "ScavioTargetReviewsTool",
+    "ScavioTargetAvailabilityTool",
     "ScavioHomeDepotSearchTool",
     "ScavioHomeDepotProductTool",
     "ScavioHomeDepotReviewsTool",
