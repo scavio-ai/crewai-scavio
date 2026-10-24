@@ -83,6 +83,11 @@ from crewai_scavio.google_play import (
     ScavioGooglePlayReviewsTool,
     ScavioGooglePlaySearchTool,
 )
+from crewai_scavio.heb import (
+    ScavioHebProductTool,
+    ScavioHebSearchTool,
+    ScavioHebStoresTool,
+)
 from crewai_scavio.home_depot import (
     ScavioHomeDepotProductTool,
     ScavioHomeDepotReviewsTool,
@@ -115,6 +120,10 @@ from crewai_scavio.instagram import (
     ScavioInstagramUserPostsTool,
     ScavioInstagramUserReelsTool,
     ScavioInstagramUserSimilarTool,
+)
+from crewai_scavio.kroger import (
+    ScavioKrogerProductTool,
+    ScavioKrogerSearchTool,
 )
 from crewai_scavio.kuaishou import (
     ScavioKuaishouCommentRepliesTool,
@@ -269,7 +278,7 @@ from crewai_scavio.zillow import (
     ScavioZillowSearchTool,
 )
 
-__version__ = "0.8.0"
+__version__ = "0.11.0"
 
 __all__ = [
     "ScavioSearchTool",
@@ -410,9 +419,14 @@ __all__ = [
     "ScavioTargetProductTool",
     "ScavioTargetReviewsTool",
     "ScavioTargetAvailabilityTool",
+    "ScavioHebSearchTool",
+    "ScavioHebProductTool",
+    "ScavioHebStoresTool",
     "ScavioHomeDepotSearchTool",
     "ScavioHomeDepotProductTool",
     "ScavioHomeDepotReviewsTool",
+    "ScavioKrogerSearchTool",
+    "ScavioKrogerProductTool",
     "ScavioZillowSearchTool",
     "ScavioZillowPropertyTool",
     "ScavioZillowAgentReviewsTool",
