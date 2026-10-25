@@ -125,6 +125,10 @@ from crewai_scavio.kroger import (
     ScavioKrogerProductTool,
     ScavioKrogerSearchTool,
 )
+from crewai_scavio.decathlon import (
+    ScavioDecathlonProductTool,
+    ScavioDecathlonSearchTool,
+)
 from crewai_scavio.kuaishou import (
     ScavioKuaishouCommentRepliesTool,
     ScavioKuaishouProfileTool,
@@ -427,6 +431,8 @@ __all__ = [
     "ScavioHomeDepotReviewsTool",
     "ScavioKrogerSearchTool",
     "ScavioKrogerProductTool",
+    "ScavioDecathlonSearchTool",
+    "ScavioDecathlonProductTool",
     "ScavioZillowSearchTool",
     "ScavioZillowPropertyTool",
     "ScavioZillowAgentReviewsTool",
