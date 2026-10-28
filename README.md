@@ -1,6 +1,6 @@
 # crewai-scavio
 
-CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 207 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
+CrewAI integration for the [Scavio Search API](https://scavio.dev?utm_source=crewai_integration), a [search API for AI agents](https://scavio.dev/search-api-for-ai-agents). Provides 209 search tools -- one per Scavio endpoint, plus free status reads for crawl and batch jobs -- for use with CrewAI agents:
 
 - **Search and web** -- Google (web, AI Mode, news, maps, shopping, flights, hotels, trends) and `ScavioExtractTool`, which reads any URL as HTML, Markdown or plain text, plus `ScavioExtractMapTool`, `ScavioExtractCrawlTool` and `ScavioExtractBatchTool` to map a site's URLs, crawl a whole site, or extract a list of pages in one job
 - **Retail** -- Amazon, Walmart, HEB, Kroger, eBay, Target, Home Depot, TikTok Shop
@@ -201,11 +201,13 @@ print(result)
 | Target | `ScavioTargetProductTool` | Product details by TCIN |
 | Target | `ScavioTargetReviewsTool` | Reviews with per-attribute averages and guest photos |
 | Target | `ScavioTargetAvailabilityTool` | In-store stock at every Target near a ZIP: units, pickup, in-store |
-| HEB | `ScavioHebSearchTool` | Search HEB grocery products: prices, UPC, stock, EBT/SNAP |
-| HEB | `ScavioHebProductTool` | Full product detail: nutrition, ingredients, coupons |
+| HEB | `ScavioHebSearchTool` | Search HEB grocery products: prices, UPC, stock, EBT/SNAP; `store_id` for one store |
+| HEB | `ScavioHebProductTool` | Full product detail: nutrition, ingredients, coupons; `store_id` for that store's price, stock, aisle |
 | HEB | `ScavioHebStoresTool` | Find HEB stores near a ZIP or city |
 | Kroger | `ScavioKrogerSearchTool` | Search Kroger grocery products: prices, stock, dietary |
 | Kroger | `ScavioKrogerProductTool` | Full product detail: nutrition, allergens, rating |
+| Decathlon | `ScavioDecathlonSearchTool` | Search Decathlon products: name, brand, price, availability, rating |
+| Decathlon | `ScavioDecathlonProductTool` | Full product detail: description, images, SKU, price, variants |
 | Home Depot | `ScavioHomeDepotSearchTool` | Search with per-store pricing and availability |
 | Home Depot | `ScavioHomeDepotProductTool` | Full item detail, spec table and documents |
 | Home Depot | `ScavioHomeDepotReviewsTool` | Review bodies and the rating distribution |

@@ -23,7 +23,15 @@ class _HebSearchInput(BaseModel):
     )
     page_size: int | None = Field(
         default=None,
-        description="Results per page, max 60. Default 30.",
+        description="Results per page, 1-60. Defaults to 60.",
+    )
+    store_id: str | None = Field(
+        default=None,
+        description=(
+            "HEB store number from Scavio HEB Stores (store_number), e.g. '441'. Prices, "
+            "stock, aisle location and assortment come from that store; the store used is "
+            "echoed in data.store {store_id, name}. US only. Omit for HEB's default store."
+        ),
     )
 
 
@@ -39,11 +47,22 @@ class _HebProductInput(BaseModel):
     )
     product_id: str | None = Field(
         default=None,
-        description="HEB product id (numeric id at the end of a product URL). Requires slug.",
+        description=(
+            "HEB product id (numeric id at the end of a product URL). Needs slug, "
+            "unless store_id is set (then product_id alone works)."
+        ),
     )
     slug: str | None = Field(
         default=None,
-        description="Product slug (readable part of the URL). Required with product_id.",
+        description="Product slug (readable part of the URL). Required with product_id unless store_id is set.",
+    )
+    store_id: str | None = Field(
+        default=None,
+        description=(
+            "HEB store number from Scavio HEB Stores (store_number), e.g. '441'. Prices, "
+            "stock, aisle location and assortment come from that store; the store used is "
+            "echoed in data.store {store_id, name}. US only. Omit for HEB's default store."
+        ),
     )
 
 
@@ -68,7 +87,8 @@ class ScavioHebSearchTool(ScavioBaseTool):
     description: str = (
         "Search HEB grocery products by keyword. Returns price (cents), list price, "
         "sale status, unit price, size, UPC, stock, EBT/SNAP eligibility, category, "
-        "aisle location and product URL. Costs 2 credits."
+        "aisle location and product URL. Pass store_id (store_number from Scavio HEB "
+        "Stores) for one store's prices, stock and assortment. Costs 2 credits."
     )
     args_schema: Type[BaseModel] = _HebSearchInput
 
@@ -77,12 +97,14 @@ class ScavioHebSearchTool(ScavioBaseTool):
         query: str,
         page: int | None = None,
         page_size: int | None = None,
+        store_id: str | None = None,
         **kwargs: Any,
     ) -> str:
         raw = self.client.heb.search(
             query=query,
             page=page,
             page_size=page_size,
+            store_id=store_id,
         )
         raw = self._truncate_nested(raw, "data", "products")
         return self._format_response(raw)
@@ -92,12 +114,14 @@ class ScavioHebSearchTool(ScavioBaseTool):
         query: str,
         page: int | None = None,
         page_size: int | None = None,
+        store_id: str | None = None,
         **kwargs: Any,
     ) -> str:
         raw = await self.async_client.heb.search(
             query=query,
             page=page,
             page_size=page_size,
+            store_id=store_id,
         )
         raw = self._truncate_nested(raw, "data", "products")
         return self._format_response(raw)
@@ -111,7 +135,9 @@ class ScavioHebProductTool(ScavioBaseTool):
         "Full HEB product detail: nutrition facts (serving size, calories, nutrients "
         "with daily values), ingredients, description, images, similar products, "
         "coupons, EBT/SNAP eligibility, breadcrumbs, aisle location. "
-        "Pass product_url or slug + product_id. Costs 2 credits."
+        "Pass product_url or slug + product_id; with store_id (store_number from Scavio "
+        "HEB Stores) product_id alone works and price, stock and aisle are for that "
+        "store. Costs 2 credits."
     )
     args_schema: Type[BaseModel] = _HebProductInput
 
@@ -120,12 +146,14 @@ class ScavioHebProductTool(ScavioBaseTool):
         product_url: str | None = None,
         product_id: str | None = None,
         slug: str | None = None,
+        store_id: str | None = None,
         **kwargs: Any,
     ) -> str:
         raw = self.client.heb.product(
             product_url=product_url,
             product_id=product_id,
             slug=slug,
+            store_id=store_id,
         )
         return self._format_response(raw)
 
@@ -134,12 +162,14 @@ class ScavioHebProductTool(ScavioBaseTool):
         product_url: str | None = None,
         product_id: str | None = None,
         slug: str | None = None,
+        store_id: str | None = None,
         **kwargs: Any,
     ) -> str:
         raw = await self.async_client.heb.product(
             product_url=product_url,
             product_id=product_id,
             slug=slug,
+            store_id=store_id,
         )
         return self._format_response(raw)
 
