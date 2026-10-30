@@ -282,7 +282,7 @@ from crewai_scavio.zillow import (
     ScavioZillowSearchTool,
 )
 
-__version__ = "0.11.2"
+__version__ = "0.11.3"
 
 __all__ = [
     "ScavioSearchTool",

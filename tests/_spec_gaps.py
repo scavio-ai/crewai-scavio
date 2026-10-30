@@ -74,6 +74,10 @@ NOT_YET_WRAPPED = frozenset(
         "chatgpt_prompt",
         "gemini_prompt",
         "google_custom_search",
+        # Added to the SDK in 0.29.0, not wrapped here yet.
+        "specs_product",
+        "specs_search",
+        "specs_stores",
     }
 )
 
