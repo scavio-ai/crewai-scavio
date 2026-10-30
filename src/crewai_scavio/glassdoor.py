@@ -1,6 +1,6 @@
 """Scavio Glassdoor tools for CrewAI.
 
-1 credit flat on all four endpoints. NOTE: addressing /reviews or /salaries
+2 credits flat on all four endpoints. NOTE: addressing /reviews or /salaries
 by employer_id takes an extra lookup -- the customer price does not change, but
 the faster path (pass back reviews_url / salaries_url as `url`) should still
 lead the docs.
@@ -12,9 +12,8 @@ lead the docs.
 - REVIEWS ARE CAPPED AT THREE per response by Glassdoor's login wall. There is
   deliberately NO `page` param on /reviews -- use category and employment_status
   to move the window, and filtered_review_count to see how many match.
-- SLOW AND FLAKY: per-attempt success 48% across 25 attempts, per-call 87%.
-  Latency company ~3-47s, reviews ~75s, salaries ~41s; a fully failing call can
-  take ~172s before its 502.
+- LATENCY: typically 3-7s per call on every endpoint. /salaries can
+  occasionally answer a retryable 502 for some employers; retry it.
 """
 
 
@@ -171,7 +170,7 @@ class ScavioGlassdoorCompaniesTool(ScavioBaseTool):
     name: str = "Scavio Glassdoor Companies"
     description: str = (
         "START HERE. Resolve a company NAME to the employer_id every other Glassdoor "
-        "method is keyed by, ranked by Glassdoor and de-duplicated. Costs 1 credit."
+        "method is keyed by, ranked by Glassdoor and de-duplicated. Costs 2 credits."
     )
     args_schema: Type[BaseModel] = _GlassdoorCompaniesInput
 
@@ -215,7 +214,7 @@ class ScavioGlassdoorCompanyTool(ScavioBaseTool):
         "ratings, star distribution, CEO approval, awards, FAQ and the five "
         "server-rendered reviews. Also returns reviews_url and salaries_url, which "
         "reviews() and salaries() accept as url to save a fetch. Provide employer_id "
-        "or url. Costs 1 credit."
+        "or url. Costs 2 credits."
     )
     args_schema: Type[BaseModel] = _GlassdoorCompanyInput
 
@@ -286,7 +285,7 @@ class ScavioGlassdoorReviewsTool(ScavioBaseTool):
         "and employer response, plus complete rating statistics, star distribution, "
         "aggregate pro/con highlight terms and per-job-title review counts. There is "
         "no page param: move the window with category and employment_status. Provide "
-        "employer_id or url. Costs 1 credit."
+        "employer_id or url. Costs 2 credits."
     )
     args_schema: Type[BaseModel] = _GlassdoorReviewsInput
 
@@ -366,8 +365,8 @@ class ScavioGlassdoorSalariesTool(ScavioBaseTool):
         "Glassdoor salaries by job title, 10 titles per page: base-pay and total-pay "
         "percentiles P10-P90 with medians called out, sample counts, currency, pay "
         "period and last-reported date. The figures are Glassdoor's ESTIMATES for the "
-        "title, not individual reported salaries. Provide employer_id or url. Costs 1 "
-        "credit."
+        "title, not individual reported salaries. Provide employer_id or url. Costs 2 "
+        "credits."
     )
     args_schema: Type[BaseModel] = _GlassdoorSalariesInput
 
